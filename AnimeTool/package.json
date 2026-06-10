@@ -1,0 +1,11 @@
+{
+  "name": "anime-tool",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "pinia": "^2.3.1"
+  }
+}
