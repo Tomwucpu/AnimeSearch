@@ -1,4 +1,8 @@
 import { normalizeAnime, normalizeAnimeList } from '../utils/normalizeAnime.js'
+import {
+  normalizeCharacterList,
+  normalizeRecommendationList
+} from '../utils/normalizeAnimeExtras.js'
 import { request } from '../utils/request.js'
 
 export async function getTopAnime(page = 1) {
@@ -22,6 +26,22 @@ export async function getAnimeDetail(id) {
   })
 
   return normalizeAnime(result.data || {})
+}
+
+export async function getAnimeCharacters(id) {
+  const result = await request({
+    url: `/anime/${id}/characters`
+  })
+
+  return normalizeCharacterList(result.data).slice(0, 12)
+}
+
+export async function getAnimeRecommendations(id) {
+  const result = await request({
+    url: `/anime/${id}/recommendations`
+  })
+
+  return normalizeRecommendationList(result.data).slice(0, 8)
 }
 
 export async function searchAnime(keyword, page = 1) {
