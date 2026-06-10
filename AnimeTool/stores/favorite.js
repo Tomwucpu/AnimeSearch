@@ -2,14 +2,18 @@ import { defineStore } from 'pinia'
 
 const STORAGE_KEY = 'anime_tool_favorites'
 
-function toFavoriteItem(anime) {
+export function toFavoriteItem(anime) {
   return {
     id: anime.id,
     title: anime.title,
     image: anime.image,
     score: anime.score,
     type: anime.type,
-    episodes: anime.episodes
+    episodes: anime.episodes,
+    rank: anime.rank,
+    members: anime.members,
+    genres: anime.genres,
+    status: anime.status
   }
 }
 

@@ -34,6 +34,8 @@ export function normalizeAnime(record = {}) {
     score: record.score ?? '暂无评分',
     type: record.type || '未知',
     episodes: record.episodes ?? '未知',
+    rank: record.rank ?? '',
+    members: record.members ?? '',
     genres: Array.isArray(record.genres)
       ? record.genres.map((item) => formatGenreName(item.name)).filter(Boolean)
       : [],

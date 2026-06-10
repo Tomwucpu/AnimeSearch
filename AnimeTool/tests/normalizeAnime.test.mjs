@@ -17,10 +17,13 @@ test('normalizeAnime maps common Jikan fields for list cards', () => {
     score: 9.1,
     type: 'TV',
     episodes: 64,
+    rank: 1,
+    members: 3600000,
     genres: [
       { name: 'Action' },
       { name: 'Adventure' }
-    ]
+    ],
+    status: 'Finished Airing'
   })
 
   assert.deepEqual(anime, {
@@ -30,9 +33,11 @@ test('normalizeAnime maps common Jikan fields for list cards', () => {
     score: 9.1,
     type: 'TV',
     episodes: 64,
+    rank: 1,
+    members: 3600000,
     genres: ['动作', '冒险'],
     synopsis: '',
-    status: '',
+    status: 'Finished Airing',
     year: '',
     rating: ''
   })

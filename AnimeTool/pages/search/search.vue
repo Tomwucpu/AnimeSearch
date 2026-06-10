@@ -104,35 +104,44 @@ onReachBottom(() => {
   min-height: 100vh;
   padding: 24rpx;
   box-sizing: border-box;
-  background: #f6f7fb;
+  background: linear-gradient(180deg, #f0f4f8 0%, #f6f7fb 100%);
 }
 
 .search-bar {
   display: flex;
   align-items: center;
   gap: 16rpx;
-  margin-bottom: 24rpx;
+  margin-bottom: 32rpx;
+  padding: 4rpx;
 }
 
 .search-input {
   flex: 1;
-  height: 80rpx;
-  padding: 0 24rpx;
+  height: 88rpx;
+  padding: 0 40rpx;
   box-sizing: border-box;
-  border-radius: 8rpx;
+  border-radius: 44rpx;
   background: #ffffff;
-  color: #23283a;
-  font-size: 28rpx;
+  color: #1e293b;
+  font-size: 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.04);
 }
 
 .search-button {
-  width: 132rpx;
-  height: 80rpx;
-  border-radius: 8rpx;
-  background: #e85d75;
+  width: 140rpx;
+  height: 88rpx;
+  border-radius: 44rpx;
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
   color: #ffffff;
-  font-size: 28rpx;
-  line-height: 80rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 88rpx;
+  box-shadow: 0 8rpx 24rpx rgba(79, 70, 229, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.search-button:active {
+  transform: scale(0.95);
 }
 
 .search-button::after {
@@ -142,6 +151,6 @@ onReachBottom(() => {
 .list {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
+  gap: 24rpx;
 }
 </style>

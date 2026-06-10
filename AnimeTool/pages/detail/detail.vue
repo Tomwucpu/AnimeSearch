@@ -158,85 +158,114 @@ onLoad((options) => {
 .page {
   min-height: 100vh;
   background: #f6f7fb;
+  padding-bottom: 60rpx;
 }
 
 .cover {
   width: 100%;
-  height: 620rpx;
+  height: 680rpx;
   background: #e8ecf2;
 }
 
 .content {
-  padding: 28rpx 24rpx 48rpx;
+  position: relative;
+  margin-top: -60rpx;
+  border-radius: 48rpx 48rpx 0 0;
+  background: #ffffff;
+  padding: 48rpx 32rpx;
+  box-shadow: 0 -8rpx 24rpx rgba(0, 0, 0, 0.05);
 }
 
 .title-row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 18rpx;
+  gap: 20rpx;
 }
 
 .title {
   flex: 1;
   min-width: 0;
-  color: #23283a;
-  font-size: 38rpx;
+  color: #1e293b;
+  font-size: 42rpx;
   font-weight: 800;
-  line-height: 50rpx;
+  line-height: 56rpx;
 }
 
 .meta-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16rpx;
-  margin-top: 28rpx;
+  gap: 20rpx;
+  margin-top: 36rpx;
+  background: #f8fafc;
+  padding: 24rpx;
+  border-radius: 20rpx;
 }
 
 .meta {
-  color: #667085;
+  color: #64748b;
   font-size: 26rpx;
   line-height: 38rpx;
 }
 
 .section {
-  margin-top: 34rpx;
+  margin-top: 48rpx;
 }
 
 .section-title {
   display: block;
-  color: #23283a;
-  font-size: 32rpx;
+  color: #1e293b;
+  font-size: 34rpx;
   font-weight: 800;
-  line-height: 44rpx;
-  margin-bottom: 18rpx;
+  margin-bottom: 24rpx;
+  position: relative;
+  padding-left: 20rpx;
+}
+
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8rpx;
+  height: 32rpx;
+  background: #4f46e5;
+  border-radius: 4rpx;
 }
 
 .genre-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 14rpx;
+  gap: 16rpx;
 }
 
 .genre-tag {
   height: 48rpx;
-  padding: 0 18rpx;
-  border-radius: 8rpx;
-  background: #eef2ff;
-  color: #4054b2;
+  padding: 0 24rpx;
+  border-radius: 24rpx;
+  background: #e0e7ff;
+  color: #4338ca;
   font-size: 24rpx;
   line-height: 48rpx;
+  font-weight: 500;
 }
 
 .favorite-button {
-  height: 88rpx;
-  margin: 34rpx 0;
-  border-radius: 8rpx;
-  background: #e85d75;
+  margin: 48rpx 0;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
   color: #ffffff;
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: 700;
-  line-height: 88rpx;
+  line-height: 96rpx;
+  box-shadow: 0 12rpx 28rpx rgba(244, 63, 94, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.favorite-button:active {
+  transform: scale(0.96);
 }
 
 .favorite-button::after {
@@ -244,22 +273,25 @@ onLoad((options) => {
 }
 
 .intro {
-  padding-top: 6rpx;
+  margin-top: 48rpx;
+  background: #f8fafc;
+  padding: 32rpx;
+  border-radius: 24rpx;
 }
 
 .intro-title {
   display: block;
-  color: #23283a;
+  color: #1e293b;
   font-size: 32rpx;
   font-weight: 800;
-  line-height: 44rpx;
   margin-bottom: 16rpx;
 }
 
 .intro-text {
-  color: #4b5565;
+  color: #475569;
   font-size: 28rpx;
-  line-height: 46rpx;
+  line-height: 44rpx;
+  text-align: justify;
 }
 
 .character-scroll {
@@ -268,50 +300,54 @@ onLoad((options) => {
 }
 
 .character-list {
-  display: flex;
-  gap: 18rpx;
+  display: inline-flex;
+  gap: 24rpx;
+  padding: 8rpx 8rpx 24rpx;
 }
 
 .character-card {
   display: inline-flex;
-  width: 168rpx;
-  padding: 14rpx;
-  box-sizing: border-box;
   flex-direction: column;
-  border-radius: 8rpx;
+  align-items: center;
+  width: 180rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+  border-radius: 16rpx;
   background: #ffffff;
-  box-shadow: 0 8rpx 28rpx rgba(35, 40, 58, 0.06);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
 }
 
 .character-image {
   width: 140rpx;
-  height: 176rpx;
-  border-radius: 6rpx;
+  height: 140rpx;
+  border-radius: 50%;
   background: #e8ecf2;
 }
 
 .character-name {
   width: 100%;
-  margin-top: 12rpx;
-  color: #23283a;
-  font-size: 24rpx;
-  font-weight: 700;
-  line-height: 32rpx;
+  margin-top: 16rpx;
+  color: #1e293b;
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 34rpx;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: center;
 }
 
 .character-role {
-  margin-top: 4rpx;
-  color: #8b95a5;
+  margin-top: 6rpx;
+  color: #64748b;
   font-size: 22rpx;
   line-height: 30rpx;
+  text-align: center;
 }
 
 .recommend-list {
   display: flex;
   flex-direction: column;
-  gap: 18rpx;
+  gap: 24rpx;
 }
 </style>

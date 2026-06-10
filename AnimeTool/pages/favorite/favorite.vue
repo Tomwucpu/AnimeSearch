@@ -46,35 +46,43 @@ onShow(() => {
   min-height: 100vh;
   padding: 24rpx;
   box-sizing: border-box;
-  background: #f6f7fb;
+  background: linear-gradient(180deg, #f0f4f8 0%, #f6f7fb 100%);
 }
 
 .list {
   display: flex;
   flex-direction: column;
-  gap: 22rpx;
+  gap: 32rpx;
 }
 
 .favorite-item {
   display: flex;
   flex-direction: column;
-  gap: 12rpx;
+  gap: 16rpx;
 }
 
 .remove-button {
   align-self: flex-end;
-  min-width: 160rpx;
-  height: 64rpx;
-  padding: 0 20rpx;
-  border-radius: 8rpx;
-  background: #ffffff;
-  color: #e85d75;
-  font-size: 26rpx;
-  line-height: 64rpx;
+  min-width: 180rpx;
+  height: 72rpx;
+  padding: 0 32rpx;
+  border-radius: 36rpx;
+  background: #fff0f2;
+  color: #f43f5e;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 72rpx;
+  box-shadow: 0 4rpx 12rpx rgba(244, 63, 94, 0.1);
+  border: 2rpx solid transparent;
+  transition: all 0.2s ease;
+}
+
+.remove-button:active {
+  background: #fecdd3;
+  transform: scale(0.95);
 }
 
 .remove-button::after {
-  border-color: #f4b8c4;
-  border-radius: 8rpx;
+  border: 0;
 }
 </style>
