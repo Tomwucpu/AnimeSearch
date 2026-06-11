@@ -23,8 +23,25 @@
       </swiper-item>
     </swiper>
 
+    <view class="tab-bar">
+      <view
+        class="tab-item"
+        :class="{ active: currentTab === 0 }"
+        @tap="switchTab(0)"
+      >
+        <text>热门排行</text>
+      </view>
+      <view
+        class="tab-item"
+        :class="{ active: currentTab === 1 }"
+        @tap="switchTab(1)"
+      >
+        <text>当季新番</text>
+      </view>
+    </view>
+
     <view class="section-head">
-      <text class="section-title">热门番剧</text>
+      <text class="section-title">{{ currentTab === 0 ? '热门番剧' : '当季新番' }}</text>
     </view>
 
     <view class="list">
@@ -51,14 +68,17 @@ import AnimeCard from '../../components/AnimeCard/AnimeCard.vue'
 import EmptyState from '../../components/EmptyState/EmptyState.vue'
 import LoadingMore from '../../components/LoadingMore/LoadingMore.vue'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
-import { getTopAnime } from '../../api/anime.js'
+import { getTopAnime, getSeasonNow } from '../../api/anime.js'
 import { useNavigation } from '../../composables/useNavigation.js'
 import { usePagedApi } from '../../composables/usePagedApi.js'
 
 const { goDetail } = useNavigation()
 
+const currentTab = ref(0)
 const banners = ref([])
-const { list: animeList, loading, loadStatus, loadData } = usePagedApi(getTopAnime)
+
+const fetchFn = (page) => currentTab.value === 0 ? getTopAnime(page) : getSeasonNow(page)
+const { list: animeList, loading, loadStatus, loadData } = usePagedApi(fetchFn)
 
 /**
  * 加载番剧列表（封装 composable，附加 Banner 更新和下拉刷新收尾）
@@ -72,6 +92,12 @@ async function loadAnime(reset = false) {
     banners.value = animeList.value.slice(0, 5)
   }
   uni.stopPullDownRefresh()
+}
+
+async function switchTab(index) {
+  if (currentTab.value === index) return
+  currentTab.value = index
+  await loadAnime(true)
 }
 
 onLoad(() => {
@@ -154,6 +180,33 @@ onReachBottom(() => {
   color: #A1C4F7;
   font-size: 26rpx;
   font-weight: 700;
+}
+
+.tab-bar {
+  display: flex;
+  margin: 32rpx 0 0;
+  padding: 8rpx;
+  background: #161922;
+  border: 2rpx solid #262F43;
+  border-radius: 14rpx;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72rpx;
+  border-radius: 10rpx;
+  color: #6B7A99;
+  font-size: 28rpx;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.tab-item.active {
+  background: #1847B1;
+  color: #DBE6FF;
 }
 
 .section-head {

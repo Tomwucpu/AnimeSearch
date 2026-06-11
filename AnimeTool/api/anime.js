@@ -68,6 +68,23 @@ export async function getAnimeRecommendations(id) {
 }
 
 /**
+ * 获取当季新番列表
+ * @param {number} page - 页码，默认第 1 页
+ * @returns {{ list: Array, pagination: Object }}
+ */
+export async function getSeasonNow(page = 1) {
+  const result = await request({
+    url: '/seasons/now',
+    data: { page }
+  })
+
+  return {
+    list: normalizeAnimeList(result.data),
+    pagination: result.pagination || {}
+  }
+}
+
+/**
  * 搜索番剧（按关键词模糊匹配）
  * @param {string} keyword - 搜索关键词
  * @param {number} page - 页码，默认第 1 页

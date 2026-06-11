@@ -35,6 +35,23 @@ export function formatMembers(members) {
   return `用户 ${Math.round(value)}`
 }
 
+const STATUS_NAME_MAP = {
+  'Currently Airing': '连载中',
+  'Finished Airing': '已完结',
+  'Not yet aired': '未开播'
+}
+
+/**
+ * 格式化番剧播出状态为中文显示
+ */
+export function formatStatus(status) {
+  if (!status) {
+    return ''
+  }
+
+  return STATUS_NAME_MAP[status] || status
+}
+
 /**
  * 取前 3 个有效类型标签用于卡片紧凑展示
  */

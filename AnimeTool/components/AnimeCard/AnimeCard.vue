@@ -11,6 +11,7 @@
         <text v-if="anime.type" class="meta-tag">{{ anime.type }}</text>
         <text v-if="anime.year" class="meta-tag">{{ anime.year }}</text>
         <text v-if="anime.episodes && anime.episodes !== '未知'" class="meta-tag">{{ anime.episodes }} 集</text>
+        <text v-if="statusLabel" class="meta-tag status-tag">{{ statusLabel }}</text>
       </view>
 
       <view class="rating-row">
@@ -36,7 +37,8 @@ import { computed } from 'vue'
 
 import {
   formatMembers,
-  formatRank
+  formatRank,
+  formatStatus
 } from '../../utils/animeCardMeta.js'
 
 const props = defineProps({
@@ -56,6 +58,8 @@ const rankValue = computed(() => rankLabel.value.replace(/^Ranking\s*/, ''))
 const membersLabel = computed(() => formatMembers(props.anime.members))
 // 评分显示，空值展示 "暂无"
 const scoreLabel = computed(() => props.anime.score || '暂无')
+// 播出状态中文标签
+const statusLabel = computed(() => formatStatus(props.anime.status))
 
 // 有效类型标签列表
 const genreList = computed(() => (
@@ -140,6 +144,11 @@ const extraGenreCount = computed(() => Math.max(genreList.value.length - visible
   line-height: 42rpx;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.status-tag {
+  color: #F2C94C;
+  border-color: #5A4A1A;
 }
 
 .rating-row {
