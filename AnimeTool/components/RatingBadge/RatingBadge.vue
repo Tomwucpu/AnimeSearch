@@ -6,6 +6,7 @@
 </template>
 
 <script setup>
+// 评分徽章组件 — 星标 + 评分数字
 import { computed } from 'vue'
 
 const props = defineProps({

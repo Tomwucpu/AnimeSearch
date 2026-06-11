@@ -1,7 +1,11 @@
+// 去除数字字符串末尾的 ".0"（e.g. "2.0" → "2"）
 function trimTrailingZero(value) {
   return value.replace(/\.0$/, '')
 }
 
+/**
+ * 格式化排名显示，空值返回空字符串避免误展示
+ */
 export function formatRank(rank) {
   if (rank === null || rank === undefined || rank === '') {
     return ''
@@ -10,6 +14,9 @@ export function formatRank(rank) {
   return `Ranking #${rank}`
 }
 
+/**
+ * 格式化用户数显示：≥1亿用"亿"，≥1万用"万"，否则直接四舍五入
+ */
 export function formatMembers(members) {
   const value = Number(members)
 
@@ -28,6 +35,9 @@ export function formatMembers(members) {
   return `用户 ${Math.round(value)}`
 }
 
+/**
+ * 取前 3 个有效类型标签用于卡片紧凑展示
+ */
 export function getVisibleGenres(genres) {
   if (!Array.isArray(genres)) {
     return []

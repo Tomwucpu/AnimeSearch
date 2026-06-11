@@ -13,6 +13,7 @@
 </template>
 
 <script setup>
+// 收藏页：展示已收藏番剧列表，支持取消收藏
 import { computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 
@@ -22,6 +23,7 @@ import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import { useFavoriteStore } from '../../stores/favorite.js'
 
 const favoriteStore = useFavoriteStore()
+// 通过 computed 绑定 store 响应式状态，自动同步持久化数据
 const favorites = computed(() => favoriteStore.favorites)
 
 function goDetail(id) {

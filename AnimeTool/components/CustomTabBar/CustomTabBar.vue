@@ -33,6 +33,8 @@
 </template>
 
 <script setup>
+// 纯 CSS 自定义标签栏 — SVG 内联图标替代图片资源，减少网络请求
+// 使用 uni.switchTab 切换页面，不支持重定向参数
 defineProps({
   current: {
     type: String,

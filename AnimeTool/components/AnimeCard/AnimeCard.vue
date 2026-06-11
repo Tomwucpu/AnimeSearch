@@ -31,6 +31,7 @@
 </template>
 
 <script setup>
+// 番剧卡片组件 — 展示海报、标题、评分、排名、用户数、类型标签
 import { computed } from 'vue'
 
 import {
@@ -47,16 +48,22 @@ const props = defineProps({
 
 defineEmits(['click'])
 
+// 格式化排名（含 "Ranking #" 前缀）
 const rankLabel = computed(() => formatRank(props.anime.rank))
+// 去除 "Ranking " 前缀，仅保留序号用于卡片内紧凑展示
 const rankValue = computed(() => rankLabel.value.replace(/^Ranking\s*/, ''))
+// 格式化用户数（万/亿单位）
 const membersLabel = computed(() => formatMembers(props.anime.members))
+// 评分显示，空值展示 "暂无"
 const scoreLabel = computed(() => props.anime.score || '暂无')
 
+// 有效类型标签列表
 const genreList = computed(() => (
   Array.isArray(props.anime.genres)
     ? props.anime.genres.filter(Boolean)
     : []
 ))
+// 卡片内最多展示 2 个类型标签，超出部分用 "+N" 折叠
 const visibleGenres = computed(() => genreList.value.slice(0, 2))
 const extraGenreCount = computed(() => Math.max(genreList.value.length - visibleGenres.value.length, 0))
 </script>

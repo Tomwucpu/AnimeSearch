@@ -28,6 +28,7 @@
 </template>
 
 <script setup>
+// 搜索页：关键词搜索 + 结果分页列表
 import { ref } from 'vue'
 import { onShow, onReachBottom } from '@dcloudio/uni-app'
 
@@ -40,7 +41,9 @@ import { searchAnime } from '../../api/anime.js'
 const keyword = ref('')
 const results = ref([])
 const page = ref(1)
+// 加载锁：防止并发重复请求
 const loading = ref(false)
+// 是否已执行过搜索（用于区分"初始状态"和"无结果"）
 const searched = ref(false)
 const loadStatus = ref('more')
 
@@ -50,6 +53,10 @@ function goDetail(id) {
   })
 }
 
+/**
+ * 执行搜索或加载下一页
+ * @param {boolean} reset - true: 新搜索；false: 加载下一页
+ */
 async function loadSearch(reset = false) {
   if (loading.value) {
     return
@@ -91,6 +98,7 @@ async function loadSearch(reset = false) {
   }
 }
 
+// 点击搜索按钮或键盘确认 → 重置 page 重新搜索
 function startSearch() {
   page.value = 1
   loadSearch(true)

@@ -78,6 +78,7 @@
 </template>
 
 <script setup>
+// 番剧详情页：封面、元信息、简介、角色列表、相关推荐、收藏切换
 import { computed, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
@@ -97,10 +98,14 @@ const recommendations = ref([])
 const loading = ref(false)
 const favoriteStore = useFavoriteStore()
 
+// 当前番剧是否已收藏，依赖于 store 响应式状态自动更新
 const isFavorite = computed(() => {
   return anime.value ? favoriteStore.isFavorite(anime.value.id) : false
 })
 
+/**
+ * 加载番剧详情主数据，触发后立即返回（不阻塞渲染）
+ */
 async function loadDetail(id) {
   loading.value = true
   characters.value = []
@@ -108,6 +113,7 @@ async function loadDetail(id) {
 
   try {
     anime.value = await getAnimeDetail(id)
+    // 角色和推荐数据异步并行加载，不阻塞详情主内容展示
     loadDetailExtras(id)
   } catch (error) {
     uni.showToast({
@@ -119,6 +125,9 @@ async function loadDetail(id) {
   }
 }
 
+/**
+ * 并行加载角色和推荐数据，各自独立 try/catch 互不影响
+ */
 async function loadDetailExtras(id) {
   try {
     characters.value = await getAnimeCharacters(id)

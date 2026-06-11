@@ -5,6 +5,7 @@
 </template>
 
 <script setup>
+// 加载状态指示器：上拉加载更多 / 加载中 / 没有更多了
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -14,6 +15,7 @@ const props = defineProps({
   }
 })
 
+// 状态 → 中文文案映射
 const text = computed(() => {
   const map = {
     more: '上拉加载更多',

@@ -10,6 +10,7 @@
 </template>
 
 <script setup>
+// 空状态占位组件 — 显示文件夹图标 + 提示文本
 defineProps({
   text: {
     type: String,

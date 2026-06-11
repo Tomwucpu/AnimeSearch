@@ -1,12 +1,18 @@
+// Jikan 角色身份 → 中文映射
 const ROLE_MAP = {
   Main: '主角',
   Supporting: '配角'
 }
 
+// 翻译角色身份（Main/Supporting → 主角/配角），未知值原样返回
 function formatRole(role) {
   return ROLE_MAP[role] || role || '未知'
 }
 
+/**
+ * 将 Jikan 角色列表规范化为应用数据模型
+ * 提取 character.images.jpg.image_url → image，翻译 role 字段
+ */
 export function normalizeCharacterList(list) {
   if (!Array.isArray(list)) {
     return []
@@ -25,6 +31,10 @@ export function normalizeCharacterList(list) {
   }).filter((item) => item.id)
 }
 
+/**
+ * 将 Jikan 推荐列表规范化为 AnimeCard 兼容数据模型
+ * 推荐数据本无 episodes/type 等字段，用占位值填充以复用 AnimeCard 组件
+ */
 export function normalizeRecommendationList(list) {
   if (!Array.isArray(list)) {
     return []

@@ -1,3 +1,4 @@
+// 清理 MAL (MyAnimeList) 简介文本：移除 HTML 标签、MAL 元数据标记、解码 HTML 实体
 function cleanSynopsis(text) {
   if (!text) {
     return ''
@@ -18,6 +19,10 @@ function cleanSynopsis(text) {
     .trim()
 }
 
+/**
+ * 将 Jikan API 原始番剧数据规范化为应用统一数据模型
+ * 字段映射：mal_id → id，images.jpg → image，genres[].name → genres[]
+ */
 export function normalizeAnime(record = {}) {
   const jpg = record.images?.jpg || {}
 
@@ -40,6 +45,9 @@ export function normalizeAnime(record = {}) {
   }
 }
 
+/**
+ * 批量规范化番剧列表，过滤非法输入
+ */
 export function normalizeAnimeList(list) {
   if (!Array.isArray(list)) {
     return []

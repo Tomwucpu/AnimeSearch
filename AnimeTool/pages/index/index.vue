@@ -43,6 +43,7 @@
 </template>
 
 <script setup>
+// 首页：Banner 轮播（取热门前5条）+ 热门番剧无限列表
 import { ref } from 'vue'
 import { onLoad, onShow, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
 
@@ -52,9 +53,11 @@ import LoadingMore from '../../components/LoadingMore/LoadingMore.vue'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import { getTopAnime } from '../../api/anime.js'
 
+// Banner 轮播数据（列表前 5 条）
 const banners = ref([])
 const animeList = ref([])
 const page = ref(1)
+// 加载锁：防止并发重复请求
 const loading = ref(false)
 const loadStatus = ref('more')
 
@@ -64,6 +67,10 @@ function goDetail(id) {
   })
 }
 
+/**
+ * 加载番剧列表
+ * @param {boolean} reset - true: 下拉刷新（重置列表）；false: 上拉加载更多（追加数据）
+ */
 async function loadAnime(reset = false) {
   if (loading.value) {
     return
@@ -83,6 +90,7 @@ async function loadAnime(reset = false) {
 
     if (reset) {
       animeList.value = nextList
+      // Banner 取前 5 条高分番剧
       banners.value = nextList.slice(0, 5)
     } else {
       animeList.value = animeList.value.concat(nextList)
@@ -112,10 +120,12 @@ onShow(() => {
   uni.hideTabBar()
 })
 
+// 下拉刷新：重置列表从第 1 页重新加载
 onPullDownRefresh(() => {
   loadAnime(true)
 })
 
+// 触底加载：追加下一页数据
 onReachBottom(() => {
   loadAnime(false)
 })
