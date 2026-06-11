@@ -42,9 +42,15 @@ AnimeTool/
 - **Styles**: SCSS preprocessor available via `uni.scss`. Units in `rpx`. Card border-radius ≤ 22rpx.
 - **Genre names** are translated to Chinese in `normalizeAnime.js` (GENRE_NAME_MAP). API responses are otherwise left in original language.
 
-## docs/code-format-requirements.md
+## .opencode/skills/code-format/SKILL.md
 
-Authoritative code conventions document. Must be followed for all new code. Key rules:
+Authoritative code format specification. Must be followed for all new code. Covers:
+- 解耦 — 单向依赖、接口明确
+- 复用 — 同类逻辑只写一次
+- 合理拆分 — 单一职责、文件粒度、目录层级
+- 注释 — 合理、不过度
+
+Key constraints:
 - Chinese UI text, no unnecessary English
 - No `console.log` (except app launch/error logging)
 - No duplicated API logic across pages
