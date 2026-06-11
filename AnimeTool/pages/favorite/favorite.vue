@@ -8,6 +8,7 @@
     </view>
 
     <EmptyState v-else text="还没有想看的番剧" />
+    <CustomTabBar current="/pages/favorite/favorite" />
   </view>
 </template>
 
@@ -17,6 +18,7 @@ import { onShow } from '@dcloudio/uni-app'
 
 import AnimeCard from '../../components/AnimeCard/AnimeCard.vue'
 import EmptyState from '../../components/EmptyState/EmptyState.vue'
+import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import { useFavoriteStore } from '../../stores/favorite.js'
 
 const favoriteStore = useFavoriteStore()
@@ -37,6 +39,7 @@ function removeFavorite(id) {
 }
 
 onShow(() => {
+  uni.hideTabBar()
   favoriteStore.loadFavorites()
 })
 </script>
@@ -45,8 +48,9 @@ onShow(() => {
 .page {
   min-height: 100vh;
   padding: 24rpx;
+  padding-bottom: calc(110rpx + env(safe-area-inset-bottom) + 24rpx);
   box-sizing: border-box;
-  background: linear-gradient(180deg, #f0f4f8 0%, #f6f7fb 100%);
+  background: #0F1115;
 }
 
 .list {
@@ -67,18 +71,18 @@ onShow(() => {
   height: 72rpx;
   padding: 0 32rpx;
   border-radius: 36rpx;
-  background: #fff0f2;
-  color: #f43f5e;
-  font-size: 28rpx;
+  background: transparent;
+  color: #eb5757;
+  font-size: 26rpx;
   font-weight: 600;
   line-height: 72rpx;
-  box-shadow: 0 4rpx 12rpx rgba(244, 63, 94, 0.1);
-  border: 2rpx solid transparent;
-  transition: all 0.2s ease;
+  border: 2rpx solid #eb5757;
+  transition: all 0.15s ease;
 }
 
 .remove-button:active {
-  background: #fecdd3;
+  background: #eb5757;
+  color: #ffffff;
   transform: scale(0.95);
 }
 

@@ -1,5 +1,6 @@
 <template>
   <view class="rating-badge">
+    <text class="rating-star">★</text>
     <text class="rating-text">{{ displayScore }}</text>
   </view>
 </template>
@@ -21,18 +22,22 @@ const displayScore = computed(() => props.score || '暂无评分')
 .rating-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-width: 96rpx;
-  height: 42rpx;
-  padding: 0 16rpx;
-  border-radius: 6rpx;
-  background: #fff3d8;
+  gap: 8rpx;
+  min-width: 100rpx;
+  height: 48rpx;
+  padding: 0 20rpx;
+  border-radius: 10rpx;
+  background: #1F2635;
+}
+
+.rating-star {
+  color: #f2c94c;
+  font-size: 24rpx;
 }
 
 .rating-text {
-  color: #9a6400;
-  font-size: 24rpx;
-  font-weight: 600;
-  line-height: 42rpx;
+  color: #DBE6FF;
+  font-size: 26rpx;
+  font-weight: 700;
 }
 </style>

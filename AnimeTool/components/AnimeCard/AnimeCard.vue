@@ -1,23 +1,30 @@
 <template>
   <view class="anime-card" @tap="$emit('click')">
-    <image class="poster" :src="anime.image || '/static/logo.png'" mode="aspectFill" />
+    <view class="poster-wrap">
+      <image class="poster" :src="anime.image || '/static/logo.png'" mode="aspectFill" />
+    </view>
 
     <view class="info">
       <text class="title">{{ anime.title || '未命名番剧' }}</text>
-      <view class="score-row">
-        <RatingBadge :score="anime.score" />
-        <text v-if="rankLabel" class="meta rank">{{ rankLabel }}</text>
-        <text v-if="membersLabel" class="meta">{{ membersLabel }}</text>
-      </view>
 
       <view class="meta-row">
-        <text class="meta">{{ anime.type || '未知' }}</text>
-        <text class="meta">{{ anime.episodes || '未知' }} 集</text>
-        <text v-if="anime.status" class="meta">状态：{{ anime.status }}</text>
+        <text v-if="anime.type" class="meta-tag">{{ anime.type }}</text>
+        <text v-if="anime.year" class="meta-tag">{{ anime.year }}</text>
+        <text v-if="anime.episodes && anime.episodes !== '未知'" class="meta-tag">{{ anime.episodes }} 集</text>
       </view>
 
-      <view v-if="visibleGenres.length" class="genre-list">
+      <view class="rating-row">
+        <view class="score">
+          <text class="score-star">★</text>
+          <text class="score-value">{{ scoreLabel }}</text>
+        </view>
+        <text v-if="membersLabel" class="members">{{ membersLabel }}</text>
+        <text v-if="rankValue" class="rank">{{ rankValue }}</text>
+      </view>
+
+      <view v-if="visibleGenres.length" class="genre-row">
         <text v-for="genre in visibleGenres" :key="genre" class="genre-tag">{{ genre }}</text>
+        <text v-if="extraGenreCount" class="genre-tag genre-more">+{{ extraGenreCount }}</text>
       </view>
     </view>
   </view>
@@ -26,11 +33,9 @@
 <script setup>
 import { computed } from 'vue'
 
-import RatingBadge from '../RatingBadge/RatingBadge.vue'
 import {
   formatMembers,
-  formatRank,
-  getVisibleGenres
+  formatRank
 } from '../../utils/animeCardMeta.js'
 
 const props = defineProps({
@@ -43,35 +48,50 @@ const props = defineProps({
 defineEmits(['click'])
 
 const rankLabel = computed(() => formatRank(props.anime.rank))
+const rankValue = computed(() => rankLabel.value.replace(/^Ranking\s*/, ''))
 const membersLabel = computed(() => formatMembers(props.anime.members))
-const visibleGenres = computed(() => getVisibleGenres(props.anime.genres))
+const scoreLabel = computed(() => props.anime.score || '暂无')
+
+const genreList = computed(() => (
+  Array.isArray(props.anime.genres)
+    ? props.anime.genres.filter(Boolean)
+    : []
+))
+const visibleGenres = computed(() => genreList.value.slice(0, 2))
+const extraGenreCount = computed(() => Math.max(genreList.value.length - visibleGenres.value.length, 0))
 </script>
 
 <style scoped>
 .anime-card {
   display: flex;
-  gap: 22rpx;
+  gap: 20rpx;
   width: 100%;
-  padding: 22rpx;
+  padding: 16rpx;
   box-sizing: border-box;
-  border-radius: 16rpx;
-  background: #ffffff;
-  box-shadow: 0 6rpx 20rpx rgba(35, 40, 58, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2rpx solid #262F43;
+  border-radius: 22rpx;
+  background: #121419;
+  overflow: hidden;
+  transition: border-color 0.2s ease, transform 0.15s ease;
 }
 
 .anime-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 2rpx 10rpx rgba(35, 40, 58, 0.04);
+  border-color: #4976D0;
+  transform: scale(0.985);
+}
+
+.poster-wrap {
+  flex: 0 0 200rpx;
+  width: 200rpx;
+  height: 280rpx;
+  border-radius: 14rpx;
+  overflow: hidden;
+  background: #1a1f2e;
 }
 
 .poster {
-  flex: 0 0 140rpx;
-  width: 140rpx;
-  height: 188rpx;
-  border-radius: 12rpx;
-  background: #eef1f5;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  width: 100%;
+  height: 100%;
 }
 
 .info {
@@ -80,14 +100,15 @@ const visibleGenres = computed(() => getVisibleGenres(props.anime.genres))
   min-width: 0;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 12rpx;
+  gap: 16rpx;
+  padding: 6rpx 0;
 }
 
 .title {
-  color: #1a1e2b;
+  color: #DBE6FF;
   font-size: 32rpx;
   font-weight: 700;
-  line-height: 44rpx;
+  line-height: 42rpx;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -95,38 +116,86 @@ const visibleGenres = computed(() => getVisibleGenres(props.anime.genres))
   -webkit-box-orient: vertical;
 }
 
-.score-row,
-.meta-row,
-.genre-list {
+.meta-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 12rpx;
 }
 
-.meta {
-  color: #64748b;
-  font-size: 24rpx;
-  line-height: 34rpx;
+.meta-tag {
+  height: 44rpx;
+  padding: 0 16rpx;
+  border: 2rpx solid #262F43;
+  border-radius: 10rpx;
+  color: #99A8C9;
+  font-size: 22rpx;
+  line-height: 42rpx;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.rank {
-  color: #f43f5e;
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.score-star {
+  color: #f2c94c;
+  font-size: 28rpx;
+}
+
+.score-value {
+  color: #DBE6FF;
+  font-size: 30rpx;
   font-weight: 700;
 }
 
-.genre-list {
+.members {
+  color: #6B7A99;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.rank {
+  color: #A1C4F7;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.genre-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
   gap: 12rpx;
+  margin-top: auto;
 }
 
 .genre-tag {
-  height: 40rpx;
-  padding: 0 16rpx;
-  border-radius: 20rpx;
-  background: #e0e7ff;
-  color: #4338ca;
+  max-width: 140rpx;
+  height: 50rpx;
+  padding: 0 18rpx;
+  border-radius: 12rpx;
+  background: #1F2635;
+  color: #A1C4F7;
   font-size: 22rpx;
-  line-height: 40rpx;
-  font-weight: 500;
+  line-height: 50rpx;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.genre-more {
+  min-width: 40rpx;
+  padding: 0 12rpx;
+  text-align: center;
 }
 </style>

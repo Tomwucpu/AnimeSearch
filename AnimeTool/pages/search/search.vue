@@ -23,16 +23,18 @@
     <EmptyState v-if="!searched" text="输入关键词搜索番剧" />
     <EmptyState v-else-if="!loading && !results.length" text="没有找到相关番剧" />
     <LoadingMore v-if="results.length" :status="loadStatus" />
+    <CustomTabBar current="/pages/search/search" />
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { onReachBottom } from '@dcloudio/uni-app'
+import { onShow, onReachBottom } from '@dcloudio/uni-app'
 
 import AnimeCard from '../../components/AnimeCard/AnimeCard.vue'
 import EmptyState from '../../components/EmptyState/EmptyState.vue'
 import LoadingMore from '../../components/LoadingMore/LoadingMore.vue'
+import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import { searchAnime } from '../../api/anime.js'
 
 const keyword = ref('')
@@ -94,6 +96,10 @@ function startSearch() {
   loadSearch(true)
 }
 
+onShow(() => {
+  uni.hideTabBar()
+})
+
 onReachBottom(() => {
   loadSearch(false)
 })
@@ -103,8 +109,9 @@ onReachBottom(() => {
 .page {
   min-height: 100vh;
   padding: 24rpx;
+  padding-bottom: calc(110rpx + env(safe-area-inset-bottom) + 24rpx);
   box-sizing: border-box;
-  background: linear-gradient(180deg, #f0f4f8 0%, #f6f7fb 100%);
+  background: #0F1115;
 }
 
 .search-bar {
@@ -112,36 +119,39 @@ onReachBottom(() => {
   align-items: center;
   gap: 16rpx;
   margin-bottom: 32rpx;
-  padding: 4rpx;
 }
 
 .search-input {
   flex: 1;
   height: 88rpx;
-  padding: 0 40rpx;
+  padding: 0 36rpx;
   box-sizing: border-box;
   border-radius: 44rpx;
-  background: #ffffff;
-  color: #1e293b;
-  font-size: 30rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.04);
+  background: #161922;
+  color: #DBE6FF;
+  font-size: 28rpx;
+  border: 2rpx solid #262F43;
+}
+
+.search-input:focus {
+  border-color: #4976D0;
 }
 
 .search-button {
   width: 140rpx;
   height: 88rpx;
   border-radius: 44rpx;
-  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+  background: #1847B1;
   color: #ffffff;
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 600;
   line-height: 88rpx;
-  box-shadow: 0 8rpx 24rpx rgba(79, 70, 229, 0.3);
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease;
 }
 
 .search-button:active {
   transform: scale(0.95);
+  background: #0C287F;
 }
 
 .search-button::after {

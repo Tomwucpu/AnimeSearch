@@ -1,6 +1,10 @@
 <template>
   <view class="empty-state">
-    <image class="empty-image" src="/static/logo.png" mode="aspectFit" />
+    <view class="empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+      </view>
     <text class="empty-text">{{ text }}</text>
   </view>
 </template>
@@ -20,19 +24,27 @@ defineProps({
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 96rpx 32rpx;
+  padding: 120rpx 32rpx;
 }
 
-.empty-image {
-  width: 132rpx;
-  height: 132rpx;
-  opacity: 0.42;
+.empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160rpx;
+  height: 160rpx;
+  color: #6B7A99;
+  opacity: 0.35;
+}
+
+.empty-icon :deep(svg) {
+  display: block;
 }
 
 .empty-text {
-  margin-top: 24rpx;
-  color: #8b95a5;
-  font-size: 28rpx;
+  margin-top: 28rpx;
+  color: #6B7A99;
+  font-size: 26rpx;
   line-height: 40rpx;
 }
 </style>

@@ -6,15 +6,18 @@
       circular
       autoplay
       indicator-dots
-      indicator-color="rgba(255,255,255,.45)"
-      indicator-active-color="#ffffff"
+      indicator-color="rgba(255,255,255,.2)"
+      indicator-active-color="#A1C4F7"
     >
       <swiper-item v-for="item in banners" :key="item.id">
         <view class="banner-item" @tap="goDetail(item.id)">
           <image class="banner-image" :src="item.image" mode="aspectFill" />
           <view class="banner-mask">
             <text class="banner-title">{{ item.title }}</text>
-            <text class="banner-score">评分 {{ item.score }}</text>
+            <view class="banner-meta">
+              <text class="banner-star">★</text>
+              <text class="banner-score">{{ item.score }}</text>
+            </view>
           </view>
         </view>
       </swiper-item>
@@ -22,7 +25,6 @@
 
     <view class="section-head">
       <text class="section-title">热门番剧</text>
-      <text class="section-subtitle">实时热门数据</text>
     </view>
 
     <view class="list">
@@ -36,16 +38,18 @@
 
     <EmptyState v-if="!loading && !animeList.length" text="暂时没有番剧数据" />
     <LoadingMore v-if="animeList.length" :status="loadStatus" />
+    <CustomTabBar current="/pages/index/index" />
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
+import { onLoad, onShow, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
 
 import AnimeCard from '../../components/AnimeCard/AnimeCard.vue'
 import EmptyState from '../../components/EmptyState/EmptyState.vue'
 import LoadingMore from '../../components/LoadingMore/LoadingMore.vue'
+import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import { getTopAnime } from '../../api/anime.js'
 
 const banners = ref([])
@@ -104,6 +108,10 @@ onLoad(() => {
   loadAnime(true)
 })
 
+onShow(() => {
+  uni.hideTabBar()
+})
+
 onPullDownRefresh(() => {
   loadAnime(true)
 })
@@ -117,16 +125,17 @@ onReachBottom(() => {
 .page {
   min-height: 100vh;
   padding: 24rpx;
+  padding-bottom: calc(110rpx + env(safe-area-inset-bottom) + 24rpx);
   box-sizing: border-box;
-  background: linear-gradient(180deg, #f0f4f8 0%, #f6f7fb 100%);
+  background: #0F1115;
 }
 
 .banner {
   width: 100%;
-  height: 420rpx;
-  border-radius: 20rpx;
+  height: 400rpx;
+  border-radius: 22rpx;
   overflow: hidden;
-  box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.1);
+  background: #161922;
 }
 
 .banner-item {
@@ -138,7 +147,7 @@ onReachBottom(() => {
 .banner-image {
   width: 100%;
   height: 100%;
-  background: #e8ecf2;
+  background: #1a1f2e;
 }
 
 .banner-mask {
@@ -148,9 +157,9 @@ onReachBottom(() => {
   bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 10rpx;
-  padding: 120rpx 32rpx 36rpx;
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.85));
+  gap: 12rpx;
+  padding: 100rpx 32rpx 36rpx;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.9));
 }
 
 .banner-title {
@@ -158,48 +167,47 @@ onReachBottom(() => {
   font-size: 36rpx;
   font-weight: 800;
   line-height: 48rpx;
-  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.4);
+}
+
+.banner-meta {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.banner-star {
+  color: #f2c94c;
+  font-size: 24rpx;
 }
 
 .banner-score {
-  color: #fbbf24;
+  color: #A1C4F7;
   font-size: 26rpx;
-  line-height: 36rpx;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .section-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin: 40rpx 8rpx 20rpx;
+  margin: 40rpx 8rpx 24rpx;
 }
 
 .section-title {
-  color: #1e293b;
-  font-size: 36rpx;
+  color: #DBE6FF;
+  font-size: 34rpx;
   font-weight: 800;
-  line-height: 48rpx;
   position: relative;
   padding-left: 20rpx;
 }
+
 .section-title::before {
   content: '';
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 8rpx;
-  height: 32rpx;
-  background: #4f46e5;
-  border-radius: 4rpx;
-}
-
-.section-subtitle {
-  color: #94a3b8;
-  font-size: 24rpx;
-  line-height: 34rpx;
-  font-weight: 500;
+  width: 6rpx;
+  height: 28rpx;
+  background: #4976D0;
+  border-radius: 3rpx;
 }
 
 .list {

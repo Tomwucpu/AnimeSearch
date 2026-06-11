@@ -10,27 +10,41 @@
         </view>
 
         <view class="meta-grid">
-          <text class="meta">类型：{{ anime.type }}</text>
-          <text class="meta">集数：{{ anime.episodes }}</text>
-          <text class="meta">状态：{{ anime.status || '未知' }}</text>
-          <text class="meta">年份：{{ anime.year || '未知' }}</text>
+          <view class="meta-item">
+            <text class="meta-label">类型</text>
+            <text class="meta-value">{{ anime.type }}</text>
+          </view>
+          <view class="meta-item">
+            <text class="meta-label">集数</text>
+            <text class="meta-value">{{ anime.episodes }}</text>
+          </view>
+          <view class="meta-item">
+            <text class="meta-label">状态</text>
+            <text class="meta-value">{{ anime.status || '未知' }}</text>
+          </view>
+          <view class="meta-item">
+            <text class="meta-label">年份</text>
+            <text class="meta-value">{{ anime.year || '未知' }}</text>
+          </view>
         </view>
 
         <view v-if="anime.genres && anime.genres.length" class="section">
-          <text class="section-title">所属分类</text>
+          <text class="section-title">分类</text>
           <view class="genre-list">
             <text v-for="genre in anime.genres" :key="genre" class="genre-tag">{{ genre }}</text>
           </view>
         </view>
 
-        <button class="favorite-button" @tap="toggleFavorite">
-          {{ isFavorite ? '已想看' : '想看' }}
-        </button>
-
-        <view class="intro">
-          <text class="intro-title">剧情简介</text>
-          <text class="intro-text">{{ anime.synopsis || '暂无简介' }}</text>
+        <view class="section">
+          <text class="section-title">剧情简介</text>
+          <view class="intro-box">
+            <text class="intro-text">{{ anime.synopsis || '暂无简介' }}</text>
+          </view>
         </view>
+
+        <button class="favorite-button" @tap="toggleFavorite">
+          {{ isFavorite ? '已想看' : '加入想看' }}
+        </button>
 
         <view v-if="characters.length" class="section">
           <text class="section-title">角色列表</text>
@@ -157,23 +171,22 @@ onLoad((options) => {
 <style scoped>
 .page {
   min-height: 100vh;
-  background: #f6f7fb;
+  background: #0F1115;
   padding-bottom: 60rpx;
 }
 
 .cover {
   width: 100%;
   height: 680rpx;
-  background: #e8ecf2;
+  background: #161922;
 }
 
 .content {
   position: relative;
   margin-top: -60rpx;
-  border-radius: 48rpx 48rpx 0 0;
-  background: #ffffff;
+  border-radius: 40rpx 40rpx 0 0;
+  background: #121419;
   padding: 48rpx 32rpx;
-  box-shadow: 0 -8rpx 24rpx rgba(0, 0, 0, 0.05);
 }
 
 .title-row {
@@ -186,7 +199,7 @@ onLoad((options) => {
 .title {
   flex: 1;
   min-width: 0;
-  color: #1e293b;
+  color: #DBE6FF;
   font-size: 42rpx;
   font-weight: 800;
   line-height: 56rpx;
@@ -197,15 +210,27 @@ onLoad((options) => {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20rpx;
   margin-top: 36rpx;
-  background: #f8fafc;
+  background: #161922;
   padding: 24rpx;
-  border-radius: 20rpx;
+  border-radius: 16rpx;
+  border: 2rpx solid #1F2635;
 }
 
-.meta {
-  color: #64748b;
-  font-size: 26rpx;
-  line-height: 38rpx;
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.meta-label {
+  color: #6B7A99;
+  font-size: 22rpx;
+}
+
+.meta-value {
+  color: #DBE6FF;
+  font-size: 28rpx;
+  font-weight: 600;
 }
 
 .section {
@@ -214,8 +239,8 @@ onLoad((options) => {
 
 .section-title {
   display: block;
-  color: #1e293b;
-  font-size: 34rpx;
+  color: #DBE6FF;
+  font-size: 32rpx;
   font-weight: 800;
   margin-bottom: 24rpx;
   position: relative;
@@ -228,10 +253,10 @@ onLoad((options) => {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 8rpx;
-  height: 32rpx;
-  background: #4f46e5;
-  border-radius: 4rpx;
+  width: 6rpx;
+  height: 28rpx;
+  background: #4976D0;
+  border-radius: 3rpx;
 }
 
 .genre-list {
@@ -241,57 +266,51 @@ onLoad((options) => {
 }
 
 .genre-tag {
-  height: 48rpx;
+  height: 52rpx;
   padding: 0 24rpx;
-  border-radius: 24rpx;
-  background: #e0e7ff;
-  color: #4338ca;
+  border-radius: 12rpx;
+  background: #1F2635;
+  color: #A1C4F7;
   font-size: 24rpx;
-  line-height: 48rpx;
-  font-weight: 500;
+  line-height: 52rpx;
+  font-weight: 600;
 }
 
 .favorite-button {
   margin: 48rpx 0;
   height: 96rpx;
   border-radius: 48rpx;
-  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  background: #1847B1;
   color: #ffffff;
   font-size: 32rpx;
   font-weight: 700;
   line-height: 96rpx;
-  box-shadow: 0 12rpx 28rpx rgba(244, 63, 94, 0.3);
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease;
 }
 
 .favorite-button:active {
   transform: scale(0.96);
+  background: #0C287F;
 }
 
 .favorite-button::after {
   border: 0;
 }
 
-.intro {
-  margin-top: 48rpx;
-  background: #f8fafc;
+.intro-box {
+  background: #161922;
   padding: 32rpx;
-  border-radius: 24rpx;
-}
-
-.intro-title {
-  display: block;
-  color: #1e293b;
-  font-size: 32rpx;
-  font-weight: 800;
-  margin-bottom: 16rpx;
+  border-radius: 16rpx;
+  border: 2rpx solid #1F2635;
 }
 
 .intro-text {
-  color: #475569;
+  color: #99A8C9;
   font-size: 28rpx;
   line-height: 44rpx;
   text-align: justify;
+  white-space: pre-line;
+  word-break: break-word;
 }
 
 .character-scroll {
@@ -313,21 +332,21 @@ onLoad((options) => {
   padding: 20rpx;
   box-sizing: border-box;
   border-radius: 16rpx;
-  background: #ffffff;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  background: #161922;
+  border: 2rpx solid #1F2635;
 }
 
 .character-image {
-  width: 140rpx;
-  height: 140rpx;
+  width: 120rpx;
+  height: 120rpx;
   border-radius: 50%;
-  background: #e8ecf2;
+  background: #1F2635;
 }
 
 .character-name {
   width: 100%;
   margin-top: 16rpx;
-  color: #1e293b;
+  color: #DBE6FF;
   font-size: 26rpx;
   font-weight: 600;
   line-height: 34rpx;
@@ -339,7 +358,7 @@ onLoad((options) => {
 
 .character-role {
   margin-top: 6rpx;
-  color: #64748b;
+  color: #6B7A99;
   font-size: 22rpx;
   line-height: 30rpx;
   text-align: center;

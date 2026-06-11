@@ -27,16 +27,17 @@
     }
   ],
   "globalStyle": {
-    "navigationBarTextStyle": "black",
+    "navigationBarTextStyle": "white",
     "navigationBarTitleText": "影视番剧档案馆",
-    "navigationBarBackgroundColor": "#ffffff",
-    "backgroundColor": "#f6f7fb"
+    "navigationBarBackgroundColor": "#121419",
+    "backgroundColor": "#0F1115"
   },
   "tabBar": {
-    "color": "#8b95a5",
-    "selectedColor": "#e85d75",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "white",
+    "custom": true,
+    "color": "#6B7A99",
+    "selectedColor": "#4976D0",
+    "backgroundColor": "#121419",
+    "borderStyle": "black",
     "list": [
       {
         "pagePath": "pages/index/index",

@@ -35,7 +35,7 @@ test('normalizeAnime maps common Jikan fields for list cards', () => {
     episodes: 64,
     rank: 1,
     members: 3600000,
-    genres: ['动作', '冒险'],
+    genres: ['Action', 'Adventure'],
     synopsis: '',
     status: 'Finished Airing',
     year: '',
@@ -61,6 +61,17 @@ test('normalizeAnime falls back to English title, small image, and Chinese score
   assert.equal(anime.image, 'https://cdn.example.com/cowboy.jpg')
   assert.equal(anime.score, '暂无评分')
   assert.equal(anime.episodes, '未知')
+})
+
+test('normalizeAnime cleans HTML tags and MAL metadata from synopsis', () => {
+  const anime = normalizeAnime({
+    mal_id: 1,
+    title: 'Test',
+    images: { jpg: {} },
+    synopsis: 'A great anime.<br><br><i>Source: Manga</i> [Written by MAL Rewrite]'
+  })
+
+  assert.equal(anime.synopsis, 'A great anime.\n\nSource: Manga')
 })
 
 test('normalizeAnimeList returns normalized list and ignores invalid input', () => {

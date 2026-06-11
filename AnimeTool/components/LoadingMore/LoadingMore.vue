@@ -30,11 +30,12 @@ const text = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 88rpx;
+  min-height: 100rpx;
+  padding: 16rpx 0;
 }
 
 .loading-text {
-  color: #8b95a5;
+  color: #6B7A99;
   font-size: 24rpx;
 }
 </style>
