@@ -27,19 +27,6 @@ export const useFavoriteStore = defineStore('favorite', {
   },
 
   actions: {
-    loadFavorites() {
-      try {
-        const saved = uni.getStorageSync(STORAGE_KEY)
-        this.favorites = Array.isArray(saved) ? saved : []
-      } catch (error) {
-        this.favorites = []
-      }
-    },
-
-    saveFavorites() {
-      uni.setStorageSync(STORAGE_KEY, this.favorites)
-    },
-
     isFavorite(id) {
       return this.favorites.some((item) => String(item.id) === String(id))
     },
@@ -50,12 +37,10 @@ export const useFavoriteStore = defineStore('favorite', {
       }
 
       this.favorites.unshift(toFavoriteItem(anime))
-      this.saveFavorites()
     },
 
     removeFavorite(id) {
       this.favorites = this.favorites.filter((item) => String(item.id) !== String(id))
-      this.saveFavorites()
     },
 
     toggleFavorite(anime) {
@@ -66,6 +51,21 @@ export const useFavoriteStore = defineStore('favorite', {
 
       this.addFavorite(anime)
       return true
+    }
+  },
+
+  persist: {
+    key: STORAGE_KEY,
+    storage: {
+      getItem(key) {
+        const value = uni.getStorageSync(key)
+        if (typeof value === 'string') return value
+        if (value == null) return null
+        return JSON.stringify(value)
+      },
+      setItem(key, value) {
+        uni.setStorageSync(key, value)
+      }
     }
   }
 })

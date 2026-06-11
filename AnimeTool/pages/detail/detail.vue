@@ -163,7 +163,6 @@ function toggleFavorite() {
 }
 
 onLoad((options) => {
-  favoriteStore.loadFavorites()
   loadDetail(options.id)
 })
 </script>

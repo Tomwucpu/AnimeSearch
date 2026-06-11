@@ -40,7 +40,6 @@ function removeFavorite(id) {
 
 onShow(() => {
   uni.hideTabBar()
-  favoriteStore.loadFavorites()
 })
 </script>
 
