@@ -53,6 +53,18 @@ export function formatStatus(status) {
 }
 
 /**
+ * 格式化放送时间为卡片展示文本
+ */
+export function formatBroadcast(broadcast) {
+  if (!broadcast || !broadcast.time) {
+    return ''
+  }
+
+  const tz = broadcast.timezone === 'Asia/Tokyo' ? 'JST' : (broadcast.timezone || '')
+  return `放送 ${broadcast.time}${tz ? ` (${tz})` : ''}`
+}
+
+/**
  * 取前 3 个有效类型标签用于卡片紧凑展示
  */
 export function getVisibleGenres(genres) {

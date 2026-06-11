@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
 import {
+  formatBroadcast,
   formatMembers,
   formatRank,
   formatStatus,
@@ -28,6 +29,15 @@ test('formatStatus translates Jikan status to Chinese', () => {
   assert.equal(formatStatus(null), '')
   assert.equal(formatStatus(undefined), '')
   assert.equal(formatStatus('Unknown Status'), 'Unknown Status')
+})
+
+test('formatBroadcast formats airing time for schedule cards', () => {
+  assert.equal(formatBroadcast({ time: '01:00', timezone: 'Asia/Tokyo' }), '放送 01:00 (JST)')
+  assert.equal(formatBroadcast({ time: '22:30', timezone: 'Asia/Tokyo' }), '放送 22:30 (JST)')
+  assert.equal(formatBroadcast({ time: '18:00', timezone: 'Other/Zone' }), '放送 18:00 (Other/Zone)')
+  assert.equal(formatBroadcast({ time: '', timezone: 'Asia/Tokyo' }), '')
+  assert.equal(formatBroadcast(null), '')
+  assert.equal(formatBroadcast({}), '')
 })
 
 test('getVisibleGenres keeps the first three valid genres', () => {

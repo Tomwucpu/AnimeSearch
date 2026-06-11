@@ -4,6 +4,7 @@ import {
   normalizeCharacterList,
   normalizeRecommendationList
 } from '../utils/normalizeAnimeExtras.js'
+import { getGenreChinese } from '../utils/genreMap.js'
 import { request } from '../utils/request.js'
 
 /**
@@ -76,6 +77,90 @@ export async function getSeasonNow(page = 1) {
   const result = await request({
     url: '/seasons/now',
     data: { page }
+  })
+
+  return {
+    list: normalizeAnimeList(result.data),
+    pagination: result.pagination || {}
+  }
+}
+
+/**
+ * 获取每周放送表（按星期筛选）
+ * @param {string} day - 星期英文名（monday ~ sunday）
+ * @param {number} page - 页码，默认第 1 页
+ * @returns {{ list: Array, pagination: Object }}
+ */
+export async function getSchedule(day, page = 1) {
+  const result = await request({
+    url: '/schedules',
+    data: {
+      filter: day,
+      page
+    }
+  })
+
+  return {
+    list: normalizeAnimeList(result.data),
+    pagination: result.pagination || {}
+  }
+}
+
+/**
+ * 获取动漫类型列表（含中文名映射）
+ * @returns {Array<{ id: number, name: string, nameZh: string }>}
+ */
+export async function getGenres() {
+  const result = await request({
+    url: '/genres/anime'
+  })
+
+  const list = result.data || []
+  return list.map((item) => ({
+    id: item.mal_id,
+    name: item.name,
+    nameZh: getGenreChinese({ name: item.name })
+  }))
+}
+
+const SEASON_DATES = {
+  winter: ['01-01', '03-31'],
+  spring: ['04-01', '06-30'],
+  summer: ['07-01', '09-30'],
+  fall: ['10-01', '12-31']
+}
+
+export async function filterAnime(filters, page = 1) {
+  const data = { page }
+  const { year, season, genres, orderBy, sort } = filters
+
+  if (orderBy) {
+    data.order_by = orderBy
+    data.sort = sort || 'desc'
+  }
+
+  if (Array.isArray(genres) && genres.length) {
+    data.genres = genres.join(',')
+  }
+
+  if (year && season && SEASON_DATES[season]) {
+    const [start, end] = SEASON_DATES[season]
+    data.start_date = `${year}-${start}`
+    data.end_date = `${year}-${end}`
+  } else if (year) {
+    data.start_date = `${year}-01-01`
+    data.end_date = `${year}-12-31`
+  } else if (season && SEASON_DATES[season]) {
+    const now = new Date()
+    const y = now.getFullYear()
+    const [start, end] = SEASON_DATES[season]
+    data.start_date = `${y}-${start}`
+    data.end_date = `${y}-${end}`
+  }
+
+  const result = await request({
+    url: '/anime',
+    data
   })
 
   return {

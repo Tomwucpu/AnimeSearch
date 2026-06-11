@@ -41,7 +41,13 @@ export function normalizeAnime(record = {}) {
     synopsis: cleanSynopsis(record.synopsis),
     status: record.status || '',
     year: record.year || '',
-    rating: record.rating || ''
+    rating: record.rating || '',
+    broadcast: record.broadcast ? {
+      day: record.broadcast.day || '',
+      time: record.broadcast.time || '',
+      timezone: record.broadcast.timezone || '',
+      string: record.broadcast.string || ''
+    } : null
   }
 }
 

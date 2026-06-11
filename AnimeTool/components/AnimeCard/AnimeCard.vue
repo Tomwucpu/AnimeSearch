@@ -12,6 +12,7 @@
         <text v-if="anime.year" class="meta-tag">{{ anime.year }}</text>
         <text v-if="anime.episodes && anime.episodes !== '未知'" class="meta-tag">{{ anime.episodes }} 集</text>
         <text v-if="statusLabel" class="meta-tag status-tag">{{ statusLabel }}</text>
+        <text v-if="broadcastLabel" class="meta-tag broadcast-tag">{{ broadcastLabel }}</text>
       </view>
 
       <view class="rating-row">
@@ -36,6 +37,7 @@
 import { computed } from 'vue'
 
 import {
+  formatBroadcast,
   formatMembers,
   formatRank,
   formatStatus
@@ -60,6 +62,8 @@ const membersLabel = computed(() => formatMembers(props.anime.members))
 const scoreLabel = computed(() => props.anime.score || '暂无')
 // 播出状态中文标签
 const statusLabel = computed(() => formatStatus(props.anime.status))
+// 放送时间标签
+const broadcastLabel = computed(() => formatBroadcast(props.anime.broadcast))
 
 // 有效类型标签列表
 const genreList = computed(() => (
@@ -149,6 +153,11 @@ const extraGenreCount = computed(() => Math.max(genreList.value.length - visible
 .status-tag {
   color: #F2C94C;
   border-color: #5A4A1A;
+}
+
+.broadcast-tag {
+  color: #7FE368;
+  border-color: #1A3A1A;
 }
 
 .rating-row {

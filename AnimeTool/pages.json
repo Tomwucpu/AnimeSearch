@@ -24,6 +24,13 @@
       "style": {
         "navigationBarTitleText": "番剧详情"
       }
+    },
+    {
+      "path": "pages/schedule/schedule",
+      "style": {
+        "navigationBarTitleText": "每周放送",
+        "enablePullDownRefresh": true
+      }
     }
   ],
   "globalStyle": {
@@ -50,6 +57,10 @@
       {
         "pagePath": "pages/favorite/favorite",
         "text": "想看"
+      },
+      {
+        "pagePath": "pages/schedule/schedule",
+        "text": "放送表"
       }
     ]
   },

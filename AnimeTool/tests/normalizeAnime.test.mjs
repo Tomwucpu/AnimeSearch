@@ -39,7 +39,8 @@ test('normalizeAnime maps common Jikan fields for list cards', () => {
     synopsis: '',
     status: 'Finished Airing',
     year: '',
-    rating: ''
+    rating: '',
+    broadcast: null
   })
 })
 
