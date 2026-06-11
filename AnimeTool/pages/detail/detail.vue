@@ -91,6 +91,9 @@ import {
   getAnimeRecommendations
 } from '../../api/anime.js'
 import { useFavoriteStore } from '../../stores/favorite.js'
+import { useNavigation } from '../../composables/useNavigation.js'
+
+const { goDetail } = useNavigation()
 
 const anime = ref(null)
 const characters = ref([])
@@ -98,13 +101,13 @@ const recommendations = ref([])
 const loading = ref(false)
 const favoriteStore = useFavoriteStore()
 
-// 当前番剧是否已收藏，依赖于 store 响应式状态自动更新
 const isFavorite = computed(() => {
   return anime.value ? favoriteStore.isFavorite(anime.value.id) : false
 })
 
 /**
  * 加载番剧详情主数据，触发后立即返回（不阻塞渲染）
+ * @param {number|string} id - MyAnimeList 番剧 ID
  */
 async function loadDetail(id) {
   loading.value = true
@@ -113,7 +116,6 @@ async function loadDetail(id) {
 
   try {
     anime.value = await getAnimeDetail(id)
-    // 角色和推荐数据异步并行加载，不阻塞详情主内容展示
     loadDetailExtras(id)
   } catch (error) {
     uni.showToast({
@@ -127,6 +129,7 @@ async function loadDetail(id) {
 
 /**
  * 并行加载角色和推荐数据，各自独立 try/catch 互不影响
+ * @param {number|string} id - MyAnimeList 番剧 ID
  */
 async function loadDetailExtras(id) {
   try {
@@ -142,12 +145,9 @@ async function loadDetailExtras(id) {
   }
 }
 
-function goDetail(id) {
-  uni.navigateTo({
-    url: `/pages/detail/detail?id=${id}`
-  })
-}
-
+/**
+ * 封面大图预览
+ */
 function previewImage() {
   if (!anime.value?.image) {
     return
@@ -159,6 +159,9 @@ function previewImage() {
   })
 }
 
+/**
+ * 切换收藏状态并反馈 toast
+ */
 function toggleFavorite() {
   if (!anime.value) {
     return

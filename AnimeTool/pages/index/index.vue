@@ -52,64 +52,26 @@ import EmptyState from '../../components/EmptyState/EmptyState.vue'
 import LoadingMore from '../../components/LoadingMore/LoadingMore.vue'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import { getTopAnime } from '../../api/anime.js'
+import { useNavigation } from '../../composables/useNavigation.js'
+import { usePagedApi } from '../../composables/usePagedApi.js'
 
-// Banner 轮播数据（列表前 5 条）
+const { goDetail } = useNavigation()
+
 const banners = ref([])
-const animeList = ref([])
-const page = ref(1)
-// 加载锁：防止并发重复请求
-const loading = ref(false)
-const loadStatus = ref('more')
-
-function goDetail(id) {
-  uni.navigateTo({
-    url: `/pages/detail/detail?id=${id}`
-  })
-}
+const { list: animeList, loading, loadStatus, loadData } = usePagedApi(getTopAnime)
 
 /**
- * 加载番剧列表
+ * 加载番剧列表（封装 composable，附加 Banner 更新和下拉刷新收尾）
  * @param {boolean} reset - true: 下拉刷新（重置列表）；false: 上拉加载更多（追加数据）
  */
 async function loadAnime(reset = false) {
-  if (loading.value) {
-    return
+  const ok = await loadData(reset)
+  if (!ok) return
+
+  if (reset) {
+    banners.value = animeList.value.slice(0, 5)
   }
-
-  if (!reset && loadStatus.value === 'noMore') {
-    return
-  }
-
-  loading.value = true
-  loadStatus.value = reset ? 'more' : 'loading'
-
-  try {
-    const nextPage = reset ? 1 : page.value
-    const result = await getTopAnime(nextPage)
-    const nextList = result.list
-
-    if (reset) {
-      animeList.value = nextList
-      // Banner 取前 5 条高分番剧
-      banners.value = nextList.slice(0, 5)
-    } else {
-      animeList.value = animeList.value.concat(nextList)
-    }
-
-    page.value = nextPage + 1
-    loadStatus.value = result.pagination?.has_next_page === false || nextList.length === 0
-      ? 'noMore'
-      : 'more'
-  } catch (error) {
-    uni.showToast({
-      title: error.message || '网络请求失败，请稍后重试',
-      icon: 'none'
-    })
-    loadStatus.value = 'more'
-  } finally {
-    loading.value = false
-    uni.stopPullDownRefresh()
-  }
+  uni.stopPullDownRefresh()
 }
 
 onLoad(() => {
@@ -120,12 +82,10 @@ onShow(() => {
   uni.hideTabBar()
 })
 
-// 下拉刷新：重置列表从第 1 页重新加载
 onPullDownRefresh(() => {
   loadAnime(true)
 })
 
-// 触底加载：追加下一页数据
 onReachBottom(() => {
   loadAnime(false)
 })

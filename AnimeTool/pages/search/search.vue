@@ -37,31 +37,23 @@ import EmptyState from '../../components/EmptyState/EmptyState.vue'
 import LoadingMore from '../../components/LoadingMore/LoadingMore.vue'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import { searchAnime } from '../../api/anime.js'
+import { useNavigation } from '../../composables/useNavigation.js'
+import { usePagedApi } from '../../composables/usePagedApi.js'
+
+const { goDetail } = useNavigation()
 
 const keyword = ref('')
-const results = ref([])
-const page = ref(1)
-// 加载锁：防止并发重复请求
-const loading = ref(false)
-// 是否已执行过搜索（用于区分"初始状态"和"无结果"）
 const searched = ref(false)
-const loadStatus = ref('more')
 
-function goDetail(id) {
-  uni.navigateTo({
-    url: `/pages/detail/detail?id=${id}`
-  })
-}
+const { list: results, loading, loadStatus, loadData } = usePagedApi(
+  (page) => searchAnime(keyword.value.trim(), page)
+)
 
 /**
  * 执行搜索或加载下一页
  * @param {boolean} reset - true: 新搜索；false: 加载下一页
  */
 async function loadSearch(reset = false) {
-  if (loading.value) {
-    return
-  }
-
   const value = keyword.value.trim()
   if (!value) {
     searched.value = false
@@ -70,37 +62,14 @@ async function loadSearch(reset = false) {
     return
   }
 
-  if (!reset && loadStatus.value === 'noMore') {
-    return
-  }
-
-  loading.value = true
   searched.value = true
-  loadStatus.value = reset ? 'more' : 'loading'
-
-  try {
-    const nextPage = reset ? 1 : page.value
-    const result = await searchAnime(value, nextPage)
-
-    results.value = reset ? result.list : results.value.concat(result.list)
-    page.value = nextPage + 1
-    loadStatus.value = result.pagination?.has_next_page === false || result.list.length === 0
-      ? 'noMore'
-      : 'more'
-  } catch (error) {
-    uni.showToast({
-      title: error.message || '网络请求失败，请稍后重试',
-      icon: 'none'
-    })
-    loadStatus.value = 'more'
-  } finally {
-    loading.value = false
-  }
+  await loadData(reset)
 }
 
-// 点击搜索按钮或键盘确认 → 重置 page 重新搜索
+/**
+ * 点击搜索按钮或键盘确认 → 重新搜索
+ */
 function startSearch() {
-  page.value = 1
   loadSearch(true)
 }
 

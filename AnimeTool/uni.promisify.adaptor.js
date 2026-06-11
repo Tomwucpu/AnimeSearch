@@ -1,3 +1,4 @@
+// uni-app Promise 适配器 — 为 uni.callback API 添加 .then/.catch 支持（Vue 2 兼容层）
 uni.addInterceptor({
   returnValue (res) {
     if (!(!!res && (typeof res === "object" || typeof res === "function") && typeof res.then === "function")) {

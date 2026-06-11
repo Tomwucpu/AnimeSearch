@@ -1,10 +1,12 @@
+// 收藏夹 Pinia store — 持久化收藏数据至 uni.storage，提供增删查切操作
 import { defineStore } from 'pinia'
 
-// 收藏夹持久化 key，保持不变以兼容旧数据
 const STORAGE_KEY = 'anime_tool_favorites'
 
 /**
  * 从番剧完整数据中提取收藏所需的关键字段，剔除 synopsis 等冗余信息以节省存储空间
+ * @param {Object} anime - normalizeAnime 输出的番剧对象
+ * @returns {Object} 精简后的收藏条目
  */
 export function toFavoriteItem(anime) {
   return {

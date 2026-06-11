@@ -27,17 +27,28 @@ import EmptyState from '../../components/EmptyState/EmptyState.vue'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
 import SwipeAction from '../../components/SwipeAction/SwipeAction.vue'
 import { useFavoriteStore } from '../../stores/favorite.js'
+import { useNavigation } from '../../composables/useNavigation.js'
+
+const { goDetail } = useNavigation()
 
 const favoriteStore = useFavoriteStore()
-// 通过 computed 绑定 store 响应式状态，自动同步持久化数据
 const favorites = computed(() => favoriteStore.favorites)
 
 const currentOpenId = ref(null)
 
+/**
+ * 控制左滑操作互斥：同时只能展开一条
+ * @param {number|string} id - 番剧 ID
+ * @param {boolean} val - 是否展开
+ */
 function onSwipeOpen(id, val) {
   currentOpenId.value = val ? id : null
 }
 
+/**
+ * 卡片点击处理 — 如当前有展开的左滑按钮则先收起，否则跳转详情
+ * @param {number|string} id - 番剧 ID
+ */
 function onCardClick(id) {
   if (currentOpenId.value) {
     currentOpenId.value = null
@@ -46,12 +57,10 @@ function onCardClick(id) {
   goDetail(id)
 }
 
-function goDetail(id) {
-  uni.navigateTo({
-    url: `/pages/detail/detail?id=${id}`
-  })
-}
-
+/**
+ * 取消收藏并关闭左滑操作
+ * @param {number|string} id - 番剧 ID
+ */
 function removeFavorite(id) {
   favoriteStore.removeFavorite(id)
   currentOpenId.value = null
