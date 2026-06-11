@@ -2,8 +2,13 @@
   <view class="page">
     <view v-if="favorites.length" class="list">
       <view v-for="item in favorites" :key="item.id" class="favorite-item">
-        <AnimeCard :anime="item" @click="goDetail(item.id)" />
-        <button class="remove-button" @tap.stop="removeFavorite(item.id)">取消想看</button>
+        <SwipeAction
+          :open="currentOpenId === item.id"
+          @update:open="(val) => onSwipeOpen(item.id, val)"
+          @action="removeFavorite(item.id)"
+        >
+          <AnimeCard :anime="item" @click="onCardClick(item.id)" />
+        </SwipeAction>
       </view>
     </view>
 
@@ -13,18 +18,33 @@
 </template>
 
 <script setup>
-// 收藏页：展示已收藏番剧列表，支持取消收藏
-import { computed } from 'vue'
+// 收藏页：展示已收藏番剧列表，支持左滑取消收藏
+import { computed, ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 
 import AnimeCard from '../../components/AnimeCard/AnimeCard.vue'
 import EmptyState from '../../components/EmptyState/EmptyState.vue'
 import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
+import SwipeAction from '../../components/SwipeAction/SwipeAction.vue'
 import { useFavoriteStore } from '../../stores/favorite.js'
 
 const favoriteStore = useFavoriteStore()
 // 通过 computed 绑定 store 响应式状态，自动同步持久化数据
 const favorites = computed(() => favoriteStore.favorites)
+
+const currentOpenId = ref(null)
+
+function onSwipeOpen(id, val) {
+  currentOpenId.value = val ? id : null
+}
+
+function onCardClick(id) {
+  if (currentOpenId.value) {
+    currentOpenId.value = null
+    return
+  }
+  goDetail(id)
+}
 
 function goDetail(id) {
   uni.navigateTo({
@@ -34,6 +54,7 @@ function goDetail(id) {
 
 function removeFavorite(id) {
   favoriteStore.removeFavorite(id)
+  currentOpenId.value = null
   uni.showToast({
     title: '已取消想看',
     icon: 'none'
@@ -58,36 +79,5 @@ onShow(() => {
   display: flex;
   flex-direction: column;
   gap: 32rpx;
-}
-
-.favorite-item {
-  display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-}
-
-.remove-button {
-  align-self: flex-end;
-  min-width: 180rpx;
-  height: 72rpx;
-  padding: 0 32rpx;
-  border-radius: 36rpx;
-  background: transparent;
-  color: #eb5757;
-  font-size: 26rpx;
-  font-weight: 600;
-  line-height: 72rpx;
-  border: 2rpx solid #eb5757;
-  transition: all 0.15s ease;
-}
-
-.remove-button:active {
-  background: #eb5757;
-  color: #ffffff;
-  transform: scale(0.95);
-}
-
-.remove-button::after {
-  border: 0;
 }
 </style>
