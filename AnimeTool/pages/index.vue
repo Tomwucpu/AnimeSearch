@@ -1,5 +1,6 @@
 <template>
   <view class="page">
+    <view class="fade-curtain" :class="{ hide: curtainHide }" />
     <swiper
       v-if="banners.length"
       class="banner"
@@ -74,9 +75,11 @@ import { getTopAnime, getSeasonNow } from '../api/anime.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { usePagedApi } from '../composables/usePagedApi.js'
 import { useBackToTop } from '../composables/useBackToTop.js'
+import { useFadeIn } from '../composables/useFadeIn.js'
 
 const { goDetail } = useNavigation()
 const { backTopVisible, scrollToTop } = useBackToTop()
+const { curtainHide } = useFadeIn()
 
 const currentTab = ref(0)
 const banners = ref([])
@@ -128,6 +131,23 @@ onReachBottom(() => {
   padding-bottom: calc(110rpx + env(safe-area-inset-bottom) + 24rpx);
   box-sizing: border-box;
   background: #0F1115;
+}
+
+.fade-curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 998;
+  background: #0F1115;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.fade-curtain.hide {
+  opacity: 0;
 }
 
 .banner {

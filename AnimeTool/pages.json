@@ -37,7 +37,11 @@
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "影视番剧档案馆",
     "navigationBarBackgroundColor": "#121419",
-    "backgroundColor": "#0F1115"
+    "backgroundColor": "#0F1115",
+    "app-plus": {
+      "animationType": "fade-in",
+      "animationDuration": 300
+    }
   },
   "tabBar": {
     "custom": true,

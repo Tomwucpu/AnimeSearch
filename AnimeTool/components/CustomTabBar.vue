@@ -11,6 +11,18 @@
       <text class="tab-text">首页</text>
     </view>
 
+    <view class="tab-item" :class="{ active: current === '/pages/schedule' }" @tap="switchTab('/pages/schedule')">
+      <view class="tab-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <path d="M16 2v4"/>
+          <path d="M8 2v4"/>
+          <path d="M3 10h18"/>
+        </svg>
+      </view>
+      <text class="tab-text">放送表</text>
+    </view>
+
     <view class="tab-item" :class="{ active: current === '/pages/search' }" @tap="switchTab('/pages/search')">
       <view class="tab-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -28,18 +40,6 @@
         </svg>
       </view>
       <text class="tab-text">想看</text>
-    </view>
-
-    <view class="tab-item" :class="{ active: current === '/pages/schedule' }" @tap="switchTab('/pages/schedule')">
-      <view class="tab-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2"/>
-          <path d="M16 2v4"/>
-          <path d="M8 2v4"/>
-          <path d="M3 10h18"/>
-        </svg>
-      </view>
-      <text class="tab-text">放送表</text>
     </view>
   </view>
 </template>

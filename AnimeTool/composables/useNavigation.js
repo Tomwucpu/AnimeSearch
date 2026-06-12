@@ -6,7 +6,9 @@ export function useNavigation() {
    */
   function goDetail(id) {
     uni.navigateTo({
-      url: `/pages/detail?id=${id}`
+      url: `/pages/detail?id=${id}`,
+      animationType: 'fade-in',
+      animationDuration: 300
     })
   }
 

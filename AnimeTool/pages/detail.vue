@@ -1,5 +1,6 @@
 <template>
   <view class="page">
+    <view class="fade-curtain" :class="{ hide: curtainHide }" />
     <view v-if="anime" class="detail">
       <image class="cover" :src="anime.image || '/static/logo.png'" mode="aspectFill" @tap="previewImage" />
 
@@ -95,9 +96,11 @@ import {
 import { useFavoriteStore } from '../stores/favorite.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { useBackToTop } from '../composables/useBackToTop.js'
+import { useFadeIn } from '../composables/useFadeIn.js'
 
 const { goDetail } = useNavigation()
 const { backTopVisible, scrollToTop } = useBackToTop()
+const { curtainHide } = useFadeIn()
 
 const anime = ref(null)
 const characters = ref([])
@@ -188,6 +191,23 @@ onLoad((options) => {
   min-height: 100vh;
   background: #0F1115;
   padding-bottom: 60rpx;
+}
+
+.fade-curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 998;
+  background: #0F1115;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.fade-curtain.hide {
+  opacity: 0;
 }
 
 .cover {
