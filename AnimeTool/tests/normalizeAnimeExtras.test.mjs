@@ -18,7 +18,13 @@ test('normalizeCharacterList maps character records for detail page', () => {
           }
         }
       },
-      role: 'Main'
+      role: 'Main',
+      voice_actors: [
+        {
+          person: { name: 'Tanezaki, Atsumi' },
+          language: 'Japanese'
+        }
+      ]
     }
   ])
 
@@ -27,7 +33,8 @@ test('normalizeCharacterList maps character records for detail page', () => {
       id: 1,
       name: 'Frieren',
       image: 'https://cdn.example.com/frieren.jpg',
-      role: '主角'
+      role: '主角',
+      voiceActor: 'Tanezaki, Atsumi'
     }
   ])
 })

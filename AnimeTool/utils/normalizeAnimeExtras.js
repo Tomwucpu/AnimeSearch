@@ -9,9 +9,16 @@ function formatRole(role) {
   return ROLE_MAP[role] || role || '未知'
 }
 
+// 提取日语声优名，无日语声优时回退到第一位声优
+function getVoiceActor(voiceActors) {
+  if (!Array.isArray(voiceActors) || !voiceActors.length) return ''
+  const ja = voiceActors.find((va) => va.language === 'Japanese')
+  return ja ? ja.person.name : (voiceActors[0].person?.name || '')
+}
+
 /**
  * 将 Jikan 角色列表规范化为应用数据模型
- * 提取 character.images.jpg.image_url → image，翻译 role 字段
+ * 提取 character.images.jpg.image_url → image，翻译 role 字段，提取日语声优名
  */
 export function normalizeCharacterList(list) {
   if (!Array.isArray(list)) {
@@ -26,7 +33,8 @@ export function normalizeCharacterList(list) {
       id: character.mal_id,
       name: character.name || '未知角色',
       image: jpg.image_url || '',
-      role: formatRole(item.role)
+      role: formatRole(item.role),
+      voiceActor: getVoiceActor(item.voice_actors)
     }
   }).filter((item) => item.id)
 }

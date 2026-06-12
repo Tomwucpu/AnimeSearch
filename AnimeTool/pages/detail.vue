@@ -9,7 +9,7 @@
           <image class="poster" :src="anime.image || '/static/logo.png'" mode="aspectFill" @tap="previewImage" />
           <view class="header-info">
             <view class="info-block">
-              <text class="info-label">开播时间</text>
+              <text class="info-label">放送开始</text>
               <text class="info-value">{{ broadcastText }}</text>
             </view>
 
@@ -53,20 +53,86 @@
         </view>
       </view>
 
-      <view class="section">
-        <text class="section-title">简介</text>
-        <view class="intro-box">
-          <text class="intro-text">{{ anime.synopsis || '暂无简介' }}</text>
+      <view class="tab-bar">
+        <view class="tab-list">
+          <view
+            v-for="tab in tabs"
+            :key="tab.key"
+            class="tab-item"
+            :class="{ active: currentTab === tab.key }"
+            @tap="currentTab = tab.key"
+          >
+            <text class="tab-text">{{ tab.label }}</text>
+            <view v-if="currentTab === tab.key" class="tab-indicator" />
+          </view>
         </view>
       </view>
 
-      <view v-if="anime.genres && anime.genres.length" class="section">
-        <text class="section-title">分类</text>
-        <view class="genre-box">
-          <text v-for="genre in anime.genres" :key="genre" class="genre-tag">{{ genre }}</text>
+      <view class="tab-content-panel">
+        <view class="tab-content">
+          <view v-show="currentTab === 'overview'">
+            <view v-if="anime.genres && anime.genres.length" class="section">
+              <text class="section-title">分类</text>
+              <view class="genre-box">
+                <text v-for="genre in anime.genres" :key="genre" class="genre-tag">{{ genre }}</text>
+              </view>
+            </view>
+
+            <view class="section">
+              <text class="section-title">简介</text>
+              <view class="intro-box">
+                <text class="intro-text">{{ anime.synopsis || '暂无简介' }}</text>
+              </view>
+            </view>
+          </view>
+
+          <view v-show="currentTab === 'characters'">
+            <view v-if="characters.length" class="section">
+              <text class="section-title">角色列表</text>
+              <view class="character-list">
+                <view v-for="item in characters" :key="item.id" class="character-item">
+                  <image class="character-avatar" :src="item.image || '/static/logo.png'" mode="aspectFill" />
+                  <view class="character-info">
+                    <view class="character-left">
+                      <text class="character-name">{{ item.name }}</text>
+                      <text v-if="item.voiceActor" class="character-voice-actor">CV: {{ item.voiceActor }}</text>
+                    </view>
+                    <text class="character-role">{{ item.role }}</text>
+                  </view>
+                </view>
+              </view>
+            </view>
+            <EmptyState v-else text="暂无角色信息" />
+          </view>
+
+          <view v-show="currentTab === 'studios'">
+            <view class="section">
+              <text class="section-title">动画工作室</text>
+              <view v-if="anime.studios && anime.studios.length" class="studio-box">
+                <text v-for="studio in anime.studios" :key="studio" class="studio-tag">{{ studio }}</text>
+              </view>
+              <EmptyState v-else text="暂无工作室信息" />
+            </view>
+          </view>
+
+          <view v-show="currentTab === 'recommendations'">
+            <view v-if="recommendations.length" class="section">
+              <text class="section-title">相关推荐</text>
+              <view class="recommend-list">
+                <AnimeCard
+                  v-for="item in recommendations"
+                  :key="item.id"
+                  :anime="item"
+                  @click="goDetail(item.id)"
+                />
+              </view>
+            </view>
+            <EmptyState v-else text="暂无相关推荐" />
+          </view>
+
+          <view class="tab-bottom-spacer" />
         </view>
       </view>
-
       <CategoryPicker
         :visible="pickerVisible"
         :current-category="favoriteCategory"
@@ -74,40 +140,14 @@
         @select="handleCategorySelect"
         @remove="handleRemoveFavorite"
       />
-
-      <view v-if="characters.length" class="section">
-        <text class="section-title">角色列表</text>
-        <scroll-view class="character-scroll" scroll-x>
-          <view class="character-list">
-            <view v-for="item in characters" :key="item.id" class="character-card">
-              <image class="character-image" :src="item.image || '/static/logo.png'" mode="aspectFill" />
-              <text class="character-name">{{ item.name }}</text>
-              <text class="character-role">{{ item.role }}</text>
-            </view>
-          </view>
-        </scroll-view>
-      </view>
-
-      <view v-if="recommendations.length" class="section">
-        <text class="section-title">相关推荐</text>
-        <view class="recommend-list">
-          <AnimeCard
-            v-for="item in recommendations"
-            :key="item.id"
-            :anime="item"
-            @click="goDetail(item.id)"
-          />
-        </view>
-      </view>
     </view>
 
     <EmptyState v-else-if="!loading" text="没有找到番剧详情" />
-    <BackToTop :visible="backTopVisible" @click="scrollToTop" />
   </view>
 </template>
 
 <script setup>
-// 番剧详情页：封面、元信息、简介、角色列表、相关推荐、收藏切换
+// 番剧详情页：封面、元信息、四标签页点击切换（概览/角色/工作室/推荐）、收藏切换
 import { computed, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
@@ -115,20 +155,17 @@ import EmptyState from '../components/EmptyState.vue'
 import StarRating from '../components/detail/StarRating.vue'
 import CategoryPicker from '../components/detail/CategoryPicker.vue'
 import AnimeCard from '../components/AnimeCard.vue'
-import BackToTop from '../components/BackToTop.vue'
 import {
   getAnimeCharacters,
-  getAnimeDetail,
+  getAnimeFull,
   getAnimeRecommendations
 } from '../api/anime.js'
 import { useFavoriteStore, WATCH_CATEGORIES } from '../stores/favorite.js'
 import { formatStatus } from '../utils/animeCardMeta.js'
 import { useNavigation } from '../composables/useNavigation.js'
-import { useBackToTop } from '../composables/useBackToTop.js'
 import { useFadeIn } from '../composables/useFadeIn.js'
 
 const { goDetail } = useNavigation()
-const { backTopVisible, scrollToTop } = useBackToTop()
 const { curtainHide } = useFadeIn()
 
 const anime = ref(null)
@@ -136,6 +173,15 @@ const characters = ref([])
 const recommendations = ref([])
 const loading = ref(false)
 const favoriteStore = useFavoriteStore()
+
+const currentTab = ref('overview')
+
+const tabs = [
+  { key: 'overview', label: '概览' },
+  { key: 'characters', label: '角色' },
+  { key: 'studios', label: '工作室' },
+  { key: 'recommendations', label: '推荐' }
+]
 
 const favoriteCategory = computed(() => {
   return anime.value ? favoriteStore.getCategory(anime.value.id) : null
@@ -158,7 +204,7 @@ const statusText = computed(() => {
 })
 
 /**
- * 加载番剧详情主数据，触发后立即返回（不阻塞渲染）
+ * 加载番剧完整详情，触发后立即返回（不阻塞渲染）
  * @param {number|string} id - MyAnimeList 番剧 ID
  */
 async function loadDetail(id) {
@@ -167,7 +213,7 @@ async function loadDetail(id) {
   recommendations.value = []
 
   try {
-    anime.value = await getAnimeDetail(id)
+    anime.value = await getAnimeFull(id)
     loadDetailExtras(id)
   } catch (error) {
     uni.showToast({
@@ -250,7 +296,6 @@ onLoad((options) => {
 .page {
   min-height: 100vh;
   background: #0F1115;
-  padding-bottom: 60rpx;
 }
 
 .fade-curtain {
@@ -271,13 +316,16 @@ onLoad((options) => {
 }
 
 .detail {
-  padding: 24rpx 32rpx 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .header-card {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 24rpx;
+  margin: 24rpx 32rpx 0;
   padding: 28rpx;
   background: #121419;
   border-radius: 16rpx;
@@ -343,27 +391,6 @@ onLoad((options) => {
   line-height: 1;
 }
 
-.genre-box {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
-  background: #161922;
-  padding: 32rpx;
-  border-radius: 16rpx;
-  border: 2rpx solid #1F2635;
-}
-
-.genre-tag {
-  height: 46rpx;
-  padding: 0 18rpx;
-  border-radius: 10rpx;
-  background: #1F2635;
-  color: #A1C4F7;
-  font-size: 22rpx;
-  line-height: 46rpx;
-  font-weight: 600;
-}
-
 .favorite-button {
   display: flex;
   align-items: center;
@@ -403,6 +430,60 @@ onLoad((options) => {
   line-height: 1;
 }
 
+.tab-bar {
+  flex-shrink: 0;
+  background: #0F1115;
+  padding: 8rpx 0;
+  margin-top: 24rpx;
+}
+
+.tab-list {
+  display: flex;
+  justify-content: center;
+  padding: 0 20rpx;
+  position: relative;
+}
+
+.tab-item {
+  position: relative;
+  padding: 16rpx 28rpx;
+  flex-shrink: 0;
+}
+
+.tab-text {
+  font-size: 28rpx;
+  color: #6B7A99;
+  transition: color 0.25s ease, font-weight 0.25s ease;
+}
+
+.tab-item.active .tab-text {
+  color: #DBE6FF;
+  font-weight: 700;
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: 6rpx;
+  left: 50%;
+  transform: translateX(-50%) scale(1);
+  width: 40rpx;
+  height: 4rpx;
+  background: #4976D0;
+  border-radius: 2rpx;
+  transition: transform 0.25s ease, width 0.25s ease;
+}
+
+.tab-content-panel {
+}
+
+.tab-content {
+  padding: 0 32rpx;
+}
+
+.tab-bottom-spacer {
+  height: 60rpx;
+}
+
 .section {
   margin-top: 48rpx;
 }
@@ -429,6 +510,27 @@ onLoad((options) => {
   border-radius: 3rpx;
 }
 
+.genre-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  background: #161922;
+  padding: 32rpx;
+  border-radius: 16rpx;
+  border: 2rpx solid #1F2635;
+}
+
+.genre-tag {
+  height: 46rpx;
+  padding: 0 18rpx;
+  border-radius: 10rpx;
+  background: #1F2635;
+  color: #A1C4F7;
+  font-size: 22rpx;
+  line-height: 46rpx;
+  font-weight: 600;
+}
+
 .intro-box {
   background: #161922;
   padding: 32rpx;
@@ -445,55 +547,96 @@ onLoad((options) => {
   word-break: break-word;
 }
 
-.character-scroll {
-  width: 100%;
-  white-space: nowrap;
-}
-
-.character-list {
-  display: inline-flex;
-  gap: 24rpx;
-  padding: 8rpx 8rpx 24rpx;
-}
-
-.character-card {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  width: 180rpx;
-  padding: 20rpx;
-  box-sizing: border-box;
-  border-radius: 16rpx;
+.studio-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
   background: #161922;
+  padding: 32rpx;
+  border-radius: 16rpx;
   border: 2rpx solid #1F2635;
 }
 
-.character-image {
-  width: 120rpx;
-  height: 120rpx;
+.studio-tag {
+  height: 46rpx;
+  padding: 0 18rpx;
+  border-radius: 10rpx;
+  background: #223355;
+  color: #8BB8F7;
+  font-size: 22rpx;
+  line-height: 46rpx;
+  font-weight: 600;
+}
+
+.character-list {
+  background: #161922;
+  border-radius: 16rpx;
+  border: 2rpx solid #1F2635;
+  overflow: hidden;
+}
+
+.character-item {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #1F2635;
+}
+
+.character-item:last-child {
+  border-bottom: 0;
+}
+
+.character-avatar {
+  flex-shrink: 0;
+  width: 80rpx;
+  height: 80rpx;
   border-radius: 50%;
   background: #1F2635;
 }
 
+.character-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.character-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .character-name {
-  width: 100%;
-  margin-top: 16rpx;
   color: #DBE6FF;
-  font-size: 26rpx;
+  font-size: 28rpx;
   font-weight: 600;
-  line-height: 34rpx;
+  line-height: 36rpx;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-align: center;
 }
 
-.character-role {
-  margin-top: 6rpx;
+.character-voice-actor {
   color: #6B7A99;
   font-size: 22rpx;
   line-height: 30rpx;
-  text-align: center;
+  margin-top: 4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.character-role {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  color: #6B7A99;
+  font-size: 22rpx;
+  line-height: 30rpx;
 }
 
 .recommend-list {

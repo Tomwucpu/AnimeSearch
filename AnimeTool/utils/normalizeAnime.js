@@ -62,3 +62,16 @@ export function normalizeAnimeList(list) {
 
   return list.map((item) => normalizeAnime(item))
 }
+
+/**
+ * 将 Jikan /full 端点的番剧数据规范化为应用统一数据模型
+ * 在 normalizeAnime 基础上追加 studios 等扩展字段
+ * @param {Object} record - Jikan /anime/{id}/full 响应的 data 字段
+ * @returns {Object} 扩展后的番剧详情
+ */
+export function normalizeAnimeFull(record = {}) {
+  return {
+    ...normalizeAnime(record),
+    studios: (record.studios || []).map((s) => s.name)
+  }
+}

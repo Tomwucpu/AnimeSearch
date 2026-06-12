@@ -1,5 +1,5 @@
 // 对接 Jikan v4 API（api.jikan.moe），所有数据经 normalize 后返回统一的应用数据模型
-import { normalizeAnime, normalizeAnimeList } from '../utils/normalizeAnime.js'
+import { normalizeAnime, normalizeAnimeFull, normalizeAnimeList } from '../utils/normalizeAnime.js'
 import {
   normalizeCharacterList,
   normalizeRecommendationList
@@ -38,6 +38,19 @@ export async function getAnimeDetail(id) {
   })
 
   return normalizeAnime(result.data || {})
+}
+
+/**
+ * 获取番剧完整详情（含工作室、流媒体链接等扩展字段）
+ * @param {number|string} id - MyAnimeList 番剧 ID
+ * @returns {Object} 规范化后的扩展番剧详情
+ */
+export async function getAnimeFull(id) {
+  const result = await request({
+    url: `/anime/${id}/full`
+  })
+
+  return normalizeAnimeFull(result.data || {})
 }
 
 /**
