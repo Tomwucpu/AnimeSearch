@@ -1,6 +1,6 @@
 <template>
   <view class="custom-tab-bar">
-    <view class="tab-item" :class="{ active: current === '/pages/index/index' }" @tap="switchTab('/pages/index/index')">
+    <view class="tab-item" :class="{ active: current === '/pages/index' }" @tap="switchTab('/pages/index')">
       <view class="tab-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M2 10 12 2l10 8"/>
@@ -11,7 +11,7 @@
       <text class="tab-text">首页</text>
     </view>
 
-    <view class="tab-item" :class="{ active: current === '/pages/search/search' }" @tap="switchTab('/pages/search/search')">
+    <view class="tab-item" :class="{ active: current === '/pages/search' }" @tap="switchTab('/pages/search')">
       <view class="tab-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="10.5" cy="10.5" r="7"/>
@@ -21,7 +21,7 @@
       <text class="tab-text">搜索</text>
     </view>
 
-    <view class="tab-item" :class="{ active: current === '/pages/favorite/favorite' }" @tap="switchTab('/pages/favorite/favorite')">
+    <view class="tab-item" :class="{ active: current === '/pages/favorite' }" @tap="switchTab('/pages/favorite')">
       <view class="tab-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 3h14a2 2 0 0 1 2 2v16l-9-5.5L3 21V5a2 2 0 0 1 2-2z"/>
@@ -30,7 +30,7 @@
       <text class="tab-text">想看</text>
     </view>
 
-    <view class="tab-item" :class="{ active: current === '/pages/schedule/schedule' }" @tap="switchTab('/pages/schedule/schedule')">
+    <view class="tab-item" :class="{ active: current === '/pages/schedule' }" @tap="switchTab('/pages/schedule')">
       <view class="tab-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2"/>

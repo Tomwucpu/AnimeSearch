@@ -26,7 +26,7 @@
 
     <EmptyState v-if="!loading && !animeList.length" text="暂无该日放送的番剧" />
     <LoadingMore v-if="animeList.length" :status="loadStatus" />
-    <CustomTabBar current="/pages/schedule/schedule" />
+    <CustomTabBar current="/pages/schedule" />
   </view>
 </template>
 
@@ -34,13 +34,13 @@
 import { ref, computed } from 'vue'
 import { onLoad, onShow, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
 
-import AnimeCard from '../../components/AnimeCard/AnimeCard.vue'
-import EmptyState from '../../components/EmptyState/EmptyState.vue'
-import LoadingMore from '../../components/LoadingMore/LoadingMore.vue'
-import CustomTabBar from '../../components/CustomTabBar/CustomTabBar.vue'
-import { getSchedule } from '../../api/anime.js'
-import { useNavigation } from '../../composables/useNavigation.js'
-import { usePagedApi } from '../../composables/usePagedApi.js'
+import AnimeCard from '../components/AnimeCard.vue'
+import EmptyState from '../components/EmptyState.vue'
+import LoadingMore from '../components/LoadingMore.vue'
+import CustomTabBar from '../components/CustomTabBar.vue'
+import { getSchedule } from '../api/anime.js'
+import { useNavigation } from '../composables/useNavigation.js'
+import { usePagedApi } from '../composables/usePagedApi.js'
 
 const { goDetail } = useNavigation()
 

@@ -1,32 +1,32 @@
 {
   "pages": [
     {
-      "path": "pages/index/index",
+      "path": "pages/index",
       "style": {
         "navigationBarTitleText": "番剧档案馆",
         "enablePullDownRefresh": true
       }
     },
     {
-      "path": "pages/search/search",
+      "path": "pages/search",
       "style": {
         "navigationBarTitleText": "搜索番剧"
       }
     },
     {
-      "path": "pages/favorite/favorite",
+      "path": "pages/favorite",
       "style": {
         "navigationBarTitleText": "我的想看"
       }
     },
     {
-      "path": "pages/detail/detail",
+      "path": "pages/detail",
       "style": {
         "navigationBarTitleText": "番剧详情"
       }
     },
     {
-      "path": "pages/schedule/schedule",
+      "path": "pages/schedule",
       "style": {
         "navigationBarTitleText": "每周放送",
         "enablePullDownRefresh": true
@@ -47,19 +47,19 @@
     "borderStyle": "black",
     "list": [
       {
-        "pagePath": "pages/index/index",
+        "pagePath": "pages/index",
         "text": "首页"
       },
       {
-        "pagePath": "pages/search/search",
+        "pagePath": "pages/search",
         "text": "搜索"
       },
       {
-        "pagePath": "pages/favorite/favorite",
+        "pagePath": "pages/favorite",
         "text": "想看"
       },
       {
-        "pagePath": "pages/schedule/schedule",
+        "pagePath": "pages/schedule",
         "text": "放送表"
       }
     ]

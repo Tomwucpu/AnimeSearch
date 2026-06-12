@@ -6,7 +6,7 @@ export function useNavigation() {
    */
   function goDetail(id) {
     uni.navigateTo({
-      url: `/pages/detail/detail?id=${id}`
+      url: `/pages/detail?id=${id}`
     })
   }
 

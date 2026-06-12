@@ -82,16 +82,16 @@
 import { computed, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
-import EmptyState from '../../components/EmptyState/EmptyState.vue'
-import RatingBadge from '../../components/RatingBadge/RatingBadge.vue'
-import AnimeCard from '../../components/AnimeCard/AnimeCard.vue'
+import EmptyState from '../components/EmptyState.vue'
+import RatingBadge from '../components/detail/RatingBadge.vue'
+import AnimeCard from '../components/AnimeCard.vue'
 import {
   getAnimeCharacters,
   getAnimeDetail,
   getAnimeRecommendations
-} from '../../api/anime.js'
-import { useFavoriteStore } from '../../stores/favorite.js'
-import { useNavigation } from '../../composables/useNavigation.js'
+} from '../api/anime.js'
+import { useFavoriteStore } from '../stores/favorite.js'
+import { useNavigation } from '../composables/useNavigation.js'
 
 const { goDetail } = useNavigation()
 

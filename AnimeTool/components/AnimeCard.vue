@@ -41,7 +41,7 @@ import {
   formatMembers,
   formatRank,
   formatStatus
-} from '../../utils/animeCardMeta.js'
+} from '../utils/animeCardMeta.js'
 
 const props = defineProps({
   anime: {
