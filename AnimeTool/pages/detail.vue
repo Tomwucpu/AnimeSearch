@@ -74,6 +74,7 @@
     </view>
 
     <EmptyState v-else-if="!loading" text="没有找到番剧详情" />
+    <BackToTop :visible="backTopVisible" @click="scrollToTop" />
   </view>
 </template>
 
@@ -85,6 +86,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import EmptyState from '../components/EmptyState.vue'
 import RatingBadge from '../components/detail/RatingBadge.vue'
 import AnimeCard from '../components/AnimeCard.vue'
+import BackToTop from '../components/BackToTop.vue'
 import {
   getAnimeCharacters,
   getAnimeDetail,
@@ -92,8 +94,10 @@ import {
 } from '../api/anime.js'
 import { useFavoriteStore } from '../stores/favorite.js'
 import { useNavigation } from '../composables/useNavigation.js'
+import { useBackToTop } from '../composables/useBackToTop.js'
 
 const { goDetail } = useNavigation()
+const { backTopVisible, scrollToTop } = useBackToTop()
 
 const anime = ref(null)
 const characters = ref([])

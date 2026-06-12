@@ -130,6 +130,7 @@
     <EmptyState v-if="!hasSearched && !loading && !results.length" text="输入关键词或选择筛选条件" />
     <EmptyState v-else-if="hasSearched && !loading && !results.length" text="没有找到相关番剧" />
     <LoadingMore v-if="results.length" :status="loadStatus" />
+    <BackToTop :visible="backTopVisible" @click="scrollToTop" />
     <CustomTabBar current="/pages/search" />
   </view>
 </template>
@@ -141,12 +142,15 @@ import { onLoad, onShow, onReachBottom } from '@dcloudio/uni-app'
 import AnimeCard from '../components/AnimeCard.vue'
 import EmptyState from '../components/EmptyState.vue'
 import LoadingMore from '../components/LoadingMore.vue'
+import BackToTop from '../components/BackToTop.vue'
 import CustomTabBar from '../components/CustomTabBar.vue'
 import { searchAnime, filterAnime, getGenres } from '../api/anime.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { usePagedApi } from '../composables/usePagedApi.js'
+import { useBackToTop } from '../composables/useBackToTop.js'
 
 const { goDetail } = useNavigation()
+const { backTopVisible, scrollToTop } = useBackToTop()
 
 const keyword = ref('')
 const mode = ref('keyword')

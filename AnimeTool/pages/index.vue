@@ -55,6 +55,7 @@
 
     <EmptyState v-if="!loading && !animeList.length" text="暂时没有番剧数据" />
     <LoadingMore v-if="animeList.length" :status="loadStatus" />
+    <BackToTop :visible="backTopVisible" @click="scrollToTop" />
     <CustomTabBar current="/pages/index" />
   </view>
 </template>
@@ -67,12 +68,15 @@ import { onLoad, onShow, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-
 import AnimeCard from '../components/AnimeCard.vue'
 import EmptyState from '../components/EmptyState.vue'
 import LoadingMore from '../components/LoadingMore.vue'
+import BackToTop from '../components/BackToTop.vue'
 import CustomTabBar from '../components/CustomTabBar.vue'
 import { getTopAnime, getSeasonNow } from '../api/anime.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { usePagedApi } from '../composables/usePagedApi.js'
+import { useBackToTop } from '../composables/useBackToTop.js'
 
 const { goDetail } = useNavigation()
+const { backTopVisible, scrollToTop } = useBackToTop()
 
 const currentTab = ref(0)
 const banners = ref([])

@@ -13,6 +13,7 @@
     </view>
 
     <EmptyState v-else text="还没有想看的番剧" />
+    <BackToTop :visible="backTopVisible" @click="scrollToTop" />
     <CustomTabBar current="/pages/favorite" />
   </view>
 </template>
@@ -24,12 +25,15 @@ import { onShow } from '@dcloudio/uni-app'
 
 import AnimeCard from '../components/AnimeCard.vue'
 import EmptyState from '../components/EmptyState.vue'
+import BackToTop from '../components/BackToTop.vue'
 import CustomTabBar from '../components/CustomTabBar.vue'
 import SwipeAction from '../components/favorite/SwipeAction.vue'
 import { useFavoriteStore } from '../stores/favorite.js'
 import { useNavigation } from '../composables/useNavigation.js'
+import { useBackToTop } from '../composables/useBackToTop.js'
 
 const { goDetail } = useNavigation()
+const { backTopVisible, scrollToTop } = useBackToTop()
 
 const favoriteStore = useFavoriteStore()
 const favorites = computed(() => favoriteStore.favorites)
