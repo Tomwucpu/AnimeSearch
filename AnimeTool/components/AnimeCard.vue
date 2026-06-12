@@ -1,7 +1,7 @@
 <template>
   <view class="anime-card" @tap="$emit('click')">
     <view class="poster-wrap">
-      <image class="poster" :src="anime.image || '/static/logo.png'" mode="aspectFill" />
+      <image class="poster" :src="anime.image || '/static/logo.png'" mode="aspectFill" lazy-load />
     </view>
 
     <view class="info">

@@ -20,7 +20,7 @@
         <text class="title">{{ anime.title }}</text>
 
         <view class="header-top">
-          <image class="poster" :src="anime.image || '/static/logo.png'" mode="aspectFill" @tap="previewImage" />
+          <image class="poster" :src="anime.image || '/static/logo.png'" mode="aspectFill" lazy-load @tap="previewImage" />
           <view class="header-info">
             <view class="info-block">
               <text class="info-label">放送开始</text>
@@ -105,7 +105,7 @@
               <text class="section-title">角色列表</text>
               <view class="character-list">
                 <view v-for="item in characters" :key="item.id" class="character-item">
-                  <image class="character-avatar" :src="item.image || '/static/logo.png'" mode="aspectFill" />
+                  <image class="character-avatar" :src="item.image || '/static/logo.png'" mode="aspectFill" lazy-load />
                   <view class="character-info">
                     <view class="character-left">
                       <text class="character-name">{{ item.name }}</text>

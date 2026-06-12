@@ -12,7 +12,7 @@
     >
       <swiper-item v-for="item in banners" :key="item.id">
         <view class="banner-item" @tap="goDetail(item.id)">
-          <image class="banner-image" :src="item.image" mode="aspectFill" />
+          <image class="banner-image" :src="item.image" mode="aspectFill" lazy-load />
           <view class="banner-mask">
             <text class="banner-title">{{ item.title }}</text>
             <view class="banner-meta">
