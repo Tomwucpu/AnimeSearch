@@ -119,7 +119,11 @@
     </view>
     </view>
 
-    <view class="list">
+    <view v-if="loading && !results.length" class="list">
+      <SkeletonCard v-for="n in 4" :key="n" />
+    </view>
+
+    <view v-else-if="results.length" class="list">
       <AnimeCard
         v-for="item in results"
         :key="item.id"
@@ -141,6 +145,7 @@ import { ref, computed, watch } from 'vue'
 import { onLoad, onShow, onReachBottom } from '@dcloudio/uni-app'
 
 import AnimeCard from '../components/AnimeCard.vue'
+import SkeletonCard from '../components/SkeletonCard.vue'
 import EmptyState from '../components/EmptyState.vue'
 import LoadingMore from '../components/LoadingMore.vue'
 import BackToTop from '../components/BackToTop.vue'
