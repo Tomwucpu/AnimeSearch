@@ -47,7 +47,8 @@ export function normalizeAnime(record = {}) {
       time: record.broadcast.time || '',
       timezone: record.broadcast.timezone || '',
       string: record.broadcast.string || ''
-    } : null
+    } : null,
+    airedFrom: record.aired?.from || ''
   }
 }
 
