@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f2fe"/>
+      <stop offset="100%" stop-color="#4facfe"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="15" flood-color="#4facfe" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGradient)"/>
+  
+  <g filter="url(#shadow)">
+    <!-- White Circle Background -->
+    <circle cx="256" cy="256" r="150" fill="#ffffff"/>
+    
+    <!-- Stylized Play Button / Sakura Petal -->
+    <path d="M220 185 C220 175, 230 170, 238 175 L330 245 C338 250, 338 262, 330 267 L238 337 C230 342, 220 337, 220 327 Z" fill="#4facfe"/>
+    
+    <!-- Decorative sparkles / stars -->
+    <path d="M350 140 Q365 140 365 125 Q365 140 380 140 Q365 140 365 155 Q365 140 350 140 Z" fill="#ffffff" opacity="0.8"/>
+    <path d="M140 380 Q150 380 150 370 Q150 380 160 380 Q150 380 150 390 Q150 380 140 380 Z" fill="#ffffff" opacity="0.8"/>
+  </g>
+</svg>

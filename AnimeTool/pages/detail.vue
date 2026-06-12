@@ -3,6 +3,20 @@
     <view class="fade-curtain" :class="{ hide: curtainHide }" />
     <view v-if="anime" class="detail">
       <view class="header-card">
+        <!-- #ifdef MP -->
+        <button class="share-btn header-action" open-type="share">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3s-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65c0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+          </svg>
+        </button>
+        <!-- #endif -->
+        <!-- #ifndef MP -->
+        <view class="share-btn header-action" @tap.stop="handleShare">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3s-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65c0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+          </svg>
+        </view>
+        <!-- #endif -->
         <text class="title">{{ anime.title }}</text>
 
         <view class="header-top">
@@ -22,7 +36,7 @@
             </view>
 
             <view class="info-block">
-              <text class="info-label">放送状态</text>
+              <text class="info-label">状态</text>
               <text class="info-value">{{ statusText }}</text>
             </view>
 
@@ -244,6 +258,58 @@ async function loadDetailExtras(id) {
 }
 
 /**
+ * 跨端分享番剧信息
+ * App 端调用系统分享面板，H5 端使用 Web Share API（不支持时降级为复制链接）
+ */
+// #ifdef APP-PLUS
+function handleShare() {
+  if (!anime.value) return
+
+  const url = `https://myanimelist.net/anime/${anime.value.id}`
+  uni.shareWithSystem({
+    type: 'text',
+    summary: `${anime.value.title} — ${url}`,
+    href: url,
+    success() {
+      uni.showToast({ title: '分享成功', icon: 'success' })
+    },
+    fail() {
+      uni.showToast({ title: '分享失败', icon: 'error' })
+    }
+  })
+}
+// #endif
+
+// #ifdef H5
+function handleShare() {
+  if (!anime.value) return
+
+  const url = `https://myanimelist.net/anime/${anime.value.id}`
+  if (navigator.share) {
+    navigator.share({ title: anime.value.title, url })
+      .then(() => uni.showToast({ title: '分享成功', icon: 'success' }))
+      .catch(() => {})
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(url)
+      .then(() => uni.showToast({ title: '链接已复制', icon: 'success' }))
+      .catch(() => uni.showToast({ title: '复制失败', icon: 'error' }))
+  }
+}
+// #endif
+
+// #ifdef MP
+import { onShareAppMessage } from '@dcloudio/uni-app'
+
+onShareAppMessage(() => {
+  if (!anime.value) return {}
+  return {
+    title: anime.value.title,
+    path: `/pages/detail?id=${anime.value.id}`
+  }
+})
+// #endif
+
+/**
  * 封面大图预览
  */
 function previewImage() {
@@ -321,6 +387,7 @@ onLoad((options) => {
 }
 
 .header-card {
+  position: relative;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -389,6 +456,35 @@ onLoad((options) => {
   font-size: 30rpx;
   font-weight: 700;
   line-height: 1;
+}
+
+.share-btn {
+  position: absolute;
+  top: 28rpx;
+  right: 28rpx;
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #1F2635;
+  color: #6B7A99;
+  z-index: 1;
+  transition: transform 0.15s ease;
+}
+
+.share-btn:active {
+  background: #2A3344;
+  transform: scale(0.92);
+}
+
+button.share-btn {
+  padding: 0;
+}
+
+button.share-btn::after {
+  border: 0;
 }
 
 .favorite-button {
