@@ -198,3 +198,15 @@ export async function searchAnime(keyword, page = 1) {
     pagination: result.pagination || {}
   }
 }
+
+/**
+ * 获取随机番剧推荐
+ * @returns {Object} 规范化后的番剧详情
+ */
+export async function getRandomAnime() {
+  const result = await request({
+    url: '/random/anime'
+  })
+
+  return normalizeAnime(result.data || {})
+}

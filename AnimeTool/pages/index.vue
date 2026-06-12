@@ -56,6 +56,7 @@
 
     <EmptyState v-if="!loading && !animeList.length" text="暂时没有番剧数据" />
     <LoadingMore v-if="animeList.length" :status="loadStatus" />
+    <RandomRecommend :shiftUp="backTopVisible" @click="goRandom" />
     <BackToTop :visible="backTopVisible" @click="scrollToTop" />
     <CustomTabBar current="/pages/index" />
   </view>
@@ -70,8 +71,9 @@ import AnimeCard from '../components/AnimeCard.vue'
 import EmptyState from '../components/EmptyState.vue'
 import LoadingMore from '../components/LoadingMore.vue'
 import BackToTop from '../components/BackToTop.vue'
+import RandomRecommend from '../components/RandomRecommend.vue'
 import CustomTabBar from '../components/CustomTabBar.vue'
-import { getTopAnime, getSeasonNow } from '../api/anime.js'
+import { getTopAnime, getSeasonNow, getRandomAnime } from '../api/anime.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { usePagedApi } from '../composables/usePagedApi.js'
 import { useBackToTop } from '../composables/useBackToTop.js'
@@ -122,6 +124,18 @@ onPullDownRefresh(() => {
 onReachBottom(() => {
   loadAnime(false)
 })
+
+async function goRandom() {
+  uni.showLoading({ title: '随机推荐中...' })
+  try {
+    const anime = await getRandomAnime()
+    uni.hideLoading()
+    goDetail(anime.id)
+  } catch {
+    uni.hideLoading()
+    uni.showToast({ title: '获取失败，请重试', icon: 'none' })
+  }
+}
 </script>
 
 <style scoped>
