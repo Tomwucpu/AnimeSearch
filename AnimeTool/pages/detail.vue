@@ -29,6 +29,30 @@
           </view>
         </view>
 
+        <button class="favorite-button" @tap="handleFavoriteTap">
+          <template v-if="favoriteCategory">
+            <view class="favorite-btn-icon">
+              <svg v-if="favoriteCategory === 'watching'" xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="currentColor" d="M21.409 9.353a2.998 2.998 0 0 1 0 5.294L8.597 21.614C6.534 22.737 4 21.277 4 18.968V5.033c0-2.31 2.534-3.769 4.597-2.648z" />
+              </svg>
+              <svg v-else-if="favoriteCategory === 'want_to_watch'" xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="currentColor" d="M17.562 21.56a1 1 0 0 1-.465-.116L12 18.764l-5.097 2.68a1 1 0 0 1-1.45-1.053l.973-5.676l-4.124-4.02a1 1 0 0 1 .554-1.705l5.699-.828l2.549-5.164a1.04 1.04 0 0 1 1.793 0l2.548 5.164l5.699.828a1 1 0 0 1 .554 1.705l-4.124 4.02l.974 5.676a1 1 0 0 1-.985 1.169Z" />
+              </svg>
+              <svg v-else-if="favoriteCategory === 'watched'" xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 16 16">
+                <path d="M0 0h16v16H0z" fill="none" />
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                  <path d="m14.25 8.75c-.5 2.5-2.3849 4.85363-5.03069 5.37991-2.64578.5263-5.33066-.7044-6.65903-3.0523-1.32837-2.34784-1.00043-5.28307.81336-7.27989 1.81379-1.99683 4.87636-2.54771 7.37636-1.54771" />
+                  <polyline points="5.75 7.75 8.25 10.25 14.25 3.75" />
+                </g>
+              </svg>
+            </view>
+            <text class="favorite-btn-text">{{ categoryLabel }}</text>
+          </template>
+          <text v-else class="favorite-btn-text">加入追番</text>
+        </button>
+
         <view v-if="anime.genres && anime.genres.length" class="section">
           <text class="section-title">分类</text>
           <view class="genre-list">
@@ -43,9 +67,13 @@
           </view>
         </view>
 
-        <button class="favorite-button" @tap="toggleFavorite">
-          {{ isFavorite ? '已想看' : '加入想看' }}
-        </button>
+        <CategoryPicker
+          :visible="pickerVisible"
+          :current-category="favoriteCategory"
+          @close="pickerVisible = false"
+          @select="handleCategorySelect"
+          @remove="handleRemoveFavorite"
+        />
 
         <view v-if="characters.length" class="section">
           <text class="section-title">角色列表</text>
@@ -86,6 +114,7 @@ import { onLoad } from '@dcloudio/uni-app'
 
 import EmptyState from '../components/EmptyState.vue'
 import RatingBadge from '../components/detail/RatingBadge.vue'
+import CategoryPicker from '../components/detail/CategoryPicker.vue'
 import AnimeCard from '../components/AnimeCard.vue'
 import BackToTop from '../components/BackToTop.vue'
 import {
@@ -93,7 +122,7 @@ import {
   getAnimeDetail,
   getAnimeRecommendations
 } from '../api/anime.js'
-import { useFavoriteStore } from '../stores/favorite.js'
+import { useFavoriteStore, WATCH_CATEGORIES } from '../stores/favorite.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { useBackToTop } from '../composables/useBackToTop.js'
 import { useFadeIn } from '../composables/useFadeIn.js'
@@ -108,8 +137,14 @@ const recommendations = ref([])
 const loading = ref(false)
 const favoriteStore = useFavoriteStore()
 
-const isFavorite = computed(() => {
-  return anime.value ? favoriteStore.isFavorite(anime.value.id) : false
+const favoriteCategory = computed(() => {
+  return anime.value ? favoriteStore.getCategory(anime.value.id) : null
+})
+
+const pickerVisible = ref(false)
+
+const categoryLabel = computed(() => {
+  return favoriteCategory.value ? WATCH_CATEGORIES[favoriteCategory.value] : ''
 })
 
 /**
@@ -169,16 +204,31 @@ function previewImage() {
 /**
  * 切换收藏状态并反馈 toast
  */
-function toggleFavorite() {
-  if (!anime.value) {
-    return
+function handleFavoriteTap() {
+  if (!anime.value) return
+  pickerVisible.value = true
+}
+
+function handleCategorySelect(category) {
+  if (!anime.value) return
+
+  if (favoriteStore.isFavorite(anime.value.id)) {
+    favoriteStore.setCategory(anime.value.id, category)
+  } else {
+    favoriteStore.addFavorite(anime.value, category)
   }
 
-  const added = favoriteStore.toggleFavorite(anime.value)
-  uni.showToast({
-    title: added ? '已加入想看' : '已取消想看',
-    icon: 'none'
-  })
+  pickerVisible.value = false
+
+  uni.showToast({ title: '已加入' + WATCH_CATEGORIES[category], icon: 'none' })
+}
+
+function handleRemoveFavorite() {
+  if (!anime.value) return
+
+  favoriteStore.removeFavorite(anime.value.id)
+  pickerVisible.value = false
+  uni.showToast({ title: '已取消追番', icon: 'none' })
 }
 
 onLoad((options) => {
@@ -312,6 +362,10 @@ onLoad((options) => {
 }
 
 .favorite-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
   margin: 48rpx 0;
   height: 96rpx;
   border-radius: 48rpx;
@@ -319,7 +373,7 @@ onLoad((options) => {
   color: #ffffff;
   font-size: 32rpx;
   font-weight: 700;
-  line-height: 96rpx;
+  line-height: 1;
   transition: transform 0.15s ease;
 }
 
@@ -330,6 +384,19 @@ onLoad((options) => {
 
 .favorite-button::after {
   border: 0;
+}
+
+.favorite-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40rpx;
+  height: 40rpx;
+  flex-shrink: 0;
+}
+
+.favorite-btn-text {
+  line-height: 1;
 }
 
 .intro-box {

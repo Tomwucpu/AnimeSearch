@@ -1,7 +1,7 @@
 <template>
   <view class="page">
     <view class="fade-curtain" :class="{ hide: curtainHide }" />
-    <scroll-view class="day-bar" scroll-x :show-scrollbar="false">
+    <view class="day-bar">
       <view class="day-list">
         <view
           v-for="(item, index) in dayTabs"
@@ -11,10 +11,10 @@
           @tap="switchDay(item.key)"
         >
           <text class="day-label">{{ item.label }}</text>
-          <text v-if="index === todayIndex" class="day-badge">今</text>
+          <view v-if="index === todayIndex" class="day-dot" />
         </view>
       </view>
-    </scroll-view>
+    </view>
 
     <view class="list">
       <AnimeCard
@@ -133,23 +133,24 @@ onReachBottom(() => {
 
 .day-list {
   display: flex;
-  gap: 16rpx;
-  white-space: nowrap;
+  gap: 8rpx;
 }
 
 .day-item {
+  position: relative;
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
-  gap: 8rpx;
-  height: 72rpx;
-  padding: 0 28rpx;
+  justify-content: center;
+  height: 56rpx;
+  padding: 0 8rpx;
   border: 2rpx solid #262F43;
   border-radius: 14rpx;
   color: #6B7A99;
-  font-size: 28rpx;
+  font-size: 22rpx;
   font-weight: 600;
   transition: all 0.2s ease;
-  flex-shrink: 0;
 }
 
 .day-item.active {
@@ -158,23 +159,15 @@ onReachBottom(() => {
   color: #DBE6FF;
 }
 
-.day-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36rpx;
-  height: 36rpx;
+.day-dot {
+  position: absolute;
+  bottom: 2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8rpx;
+  height: 8rpx;
   border-radius: 50%;
   background: #F2C94C;
-  color: #0F1115;
-  font-size: 20rpx;
-  font-weight: 800;
-  flex-shrink: 0;
-}
-
-.day-item.active .day-badge {
-  background: #DBE6FF;
-  color: #1847B1;
 }
 
 .list {
