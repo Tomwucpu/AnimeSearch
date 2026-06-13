@@ -142,7 +142,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { onLoad, onShow, onReachBottom } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReachBottom, onPullDownRefresh } from '@dcloudio/uni-app'
 
 import AnimeCard from '../components/AnimeCard.vue'
 import SkeletonCard from '../components/SkeletonCard.vue'
@@ -301,6 +301,14 @@ onReachBottom(() => {
   if (mode.value !== 'none') {
     loadSearch(false)
   }
+})
+
+onPullDownRefresh(() => {
+  if (!hasSearched.value) {
+    uni.stopPullDownRefresh()
+    return
+  }
+  loadSearch(true).then(() => uni.stopPullDownRefresh())
 })
 </script>
 

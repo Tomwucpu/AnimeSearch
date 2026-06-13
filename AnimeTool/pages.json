@@ -10,19 +10,22 @@
     {
       "path": "pages/search",
       "style": {
-        "navigationBarTitleText": "搜索番剧"
+        "navigationBarTitleText": "搜索番剧",
+        "enablePullDownRefresh": true
       }
     },
     {
       "path": "pages/favorite",
       "style": {
-        "navigationBarTitleText": "我的追番"
+        "navigationBarTitleText": "我的追番",
+        "enablePullDownRefresh": true
       }
     },
     {
       "path": "pages/detail",
       "style": {
-        "navigationBarTitleText": "番剧详情"
+        "navigationBarTitleText": "番剧详情",
+        "enablePullDownRefresh": true
       }
     },
     {

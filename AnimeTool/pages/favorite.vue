@@ -39,7 +39,7 @@
 <script setup>
 // 追番页：分类 Tab 筛选 + 左滑取消追番
 import { computed, ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
+import { onShow, onPullDownRefresh } from '@dcloudio/uni-app'
 
 import AnimeCard from '../components/AnimeCard.vue'
 import EmptyState from '../components/EmptyState.vue'
@@ -104,6 +104,10 @@ function removeFavorite(id) {
 
 onShow(() => {
   uni.hideTabBar()
+})
+
+onPullDownRefresh(() => {
+  uni.stopPullDownRefresh()
 })
 </script>
 

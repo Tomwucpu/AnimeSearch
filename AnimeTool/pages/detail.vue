@@ -163,7 +163,7 @@
 <script setup>
 // 番剧详情页：封面、元信息、四标签页点击切换（概览/角色/工作室/推荐）、收藏切换
 import { computed, ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app'
 
 import EmptyState from '../components/EmptyState.vue'
 import StarRating from '../components/detail/StarRating.vue'
@@ -186,6 +186,7 @@ const anime = ref(null)
 const characters = ref([])
 const recommendations = ref([])
 const loading = ref(false)
+const currentId = ref(null)
 const favoriteStore = useFavoriteStore()
 
 const currentTab = ref('overview')
@@ -354,7 +355,15 @@ function handleRemoveFavorite() {
 }
 
 onLoad((options) => {
-  loadDetail(options.id)
+  currentId.value = options.id
+  loadDetail(currentId.value)
+})
+
+onPullDownRefresh(() => {
+  if (currentId.value) {
+    loadDetail(currentId.value)
+  }
+  uni.stopPullDownRefresh()
 })
 </script>
 
