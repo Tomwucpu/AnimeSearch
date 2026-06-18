@@ -9,6 +9,12 @@ export const WATCH_CATEGORIES = {
   watched: '看过'
 }
 
+export const CATEGORY_COLORS = {
+  watching: { bg: 'rgba(52, 199, 89, 0.75)', text: '#ffffff' },
+  want_to_watch: { bg: 'rgba(73, 118, 208, 0.75)', text: '#ffffff' },
+  watched: { bg: 'rgba(175, 82, 222, 0.75)', text: '#ffffff' }
+}
+
 export const DEFAULT_CATEGORY = 'want_to_watch'
 
 /**

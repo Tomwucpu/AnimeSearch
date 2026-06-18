@@ -8,6 +8,7 @@
           :key="cat.key"
           class="picker-option"
           :class="{ active: currentCategory === cat.key }"
+          :style="getOptionStyle(cat.key)"
           @tap="select(cat.key)"
         >
           <view class="option-icon">
@@ -44,7 +45,7 @@
 
 <script setup>
 // 追番分类选择底部弹窗 — 展示在看/想看/看过三个选项，支持取消追番
-import { WATCH_CATEGORIES } from '../../stores/favorite.js'
+import { WATCH_CATEGORIES, CATEGORY_COLORS } from '../../stores/favorite.js'
 
 const props = defineProps({
   visible: {
@@ -75,6 +76,13 @@ function select(key) {
 
 function remove() {
   emit('remove')
+}
+
+function getOptionStyle(key) {
+  if (props.currentCategory !== key) return {}
+  const colors = CATEGORY_COLORS[key]
+  if (!colors) return {}
+  return { borderColor: colors.bg, color: colors.bg }
 }
 </script>
 
@@ -140,8 +148,7 @@ function remove() {
 
 .picker-option.active {
   background: rgba(73, 118, 208, 0.15);
-  border: 2rpx solid #4976D0;
-  color: #4976D0;
+  border: 2rpx solid;
 }
 
 .picker-option:active {
@@ -169,7 +176,6 @@ function remove() {
   justify-content: center;
   width: 40rpx;
   height: 40rpx;
-  color: #4976D0;
   flex-shrink: 0;
 }
 

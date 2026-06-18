@@ -24,7 +24,7 @@
         >
           <view class="card-wrapper">
             <AnimeCard :anime="item" @click="onCardClick(item.id)" />
-            <text class="category-tag">{{ getCategoryLabel(item.category) }}</text>
+            <text class="category-tag" :style="getCategoryStyle(item.category)">{{ getCategoryLabel(item.category) }}</text>
           </view>
         </SwipeAction>
       </view>
@@ -46,7 +46,7 @@ import EmptyState from '../components/EmptyState.vue'
 import BackToTop from '../components/BackToTop.vue'
 import CustomTabBar from '../components/CustomTabBar.vue'
 import SwipeAction from '../components/favorite/SwipeAction.vue'
-import { useFavoriteStore, WATCH_CATEGORIES } from '../stores/favorite.js'
+import { useFavoriteStore, WATCH_CATEGORIES, CATEGORY_COLORS } from '../stores/favorite.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { useBackToTop } from '../composables/useBackToTop.js'
 import { useFadeIn } from '../composables/useFadeIn.js'
@@ -79,6 +79,12 @@ const emptyText = computed(() => {
 
 function getCategoryLabel(category) {
   return WATCH_CATEGORIES[category] || ''
+}
+
+function getCategoryStyle(category) {
+  const colors = CATEGORY_COLORS[category]
+  if (!colors) return { background: 'rgba(73, 118, 208, 0.75)' }
+  return { background: colors.bg, color: colors.text }
 }
 
 function onSwipeOpen(id, val) {
@@ -186,8 +192,6 @@ onPullDownRefresh(() => {
   height: 40rpx;
   padding: 0 16rpx;
   border-radius: 8rpx;
-  background: rgba(73, 118, 208, 0.85);
-  color: #ffffff;
   font-size: 22rpx;
   font-weight: 600;
   line-height: 40rpx;

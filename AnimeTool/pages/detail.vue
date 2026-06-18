@@ -40,7 +40,7 @@
               <text class="info-value">{{ statusText }}</text>
             </view>
 
-            <button class="favorite-button" @tap="handleFavoriteTap">
+            <button class="favorite-button" :style="favoriteButtonStyle" @tap="handleFavoriteTap">
               <template v-if="favoriteCategory">
                 <view class="favorite-btn-icon">
                   <svg v-if="favoriteCategory === 'watching'" xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
@@ -174,7 +174,7 @@ import {
   getAnimeFull,
   getAnimeRecommendations
 } from '../api/anime.js'
-import { useFavoriteStore, WATCH_CATEGORIES } from '../stores/favorite.js'
+import { useFavoriteStore, WATCH_CATEGORIES, CATEGORY_COLORS } from '../stores/favorite.js'
 import { formatStatus } from '../utils/animeCardMeta.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { useFadeIn } from '../composables/useFadeIn.js'
@@ -206,6 +206,12 @@ const pickerVisible = ref(false)
 
 const categoryLabel = computed(() => {
   return favoriteCategory.value ? WATCH_CATEGORIES[favoriteCategory.value] : ''
+})
+
+const favoriteButtonStyle = computed(() => {
+  if (!favoriteCategory.value) return {}
+  const colors = CATEGORY_COLORS[favoriteCategory.value]
+  return colors ? { background: colors.bg } : {}
 })
 
 const broadcastText = computed(() => {
