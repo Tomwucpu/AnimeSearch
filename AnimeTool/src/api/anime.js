@@ -3,7 +3,8 @@ import { normalizeAnime, normalizeAnimeFull, normalizeAnimeList } from '../utils
 import {
   normalizeCharacterList,
   normalizeEpisodeList,
-  normalizeRecommendationList
+  normalizeRecommendationList,
+  normalizeReviewList
 } from '../utils/normalizeAnimeExtras.js'
 import { getGenreChinese } from '../utils/genreMap.js'
 import { request } from '../utils/request.js'
@@ -80,6 +81,19 @@ export async function getAnimeRecommendations(id) {
 
   // 推荐数据量较大，取前 8 个以控制详情页渲染开销
   return normalizeRecommendationList(result.data).slice(0, 8)
+}
+
+/**
+ * 获取番剧评测列表
+ * @param {number|string} id - MyAnimeList 番剧 ID
+ * @returns {Array} 规范化后的评测列表（最多 6 条）
+ */
+export async function getAnimeReviews(id) {
+  const result = await request({
+    url: `/anime/${id}/reviews`
+  })
+
+  return normalizeReviewList(result.data).slice(0, 6)
 }
 
 /**

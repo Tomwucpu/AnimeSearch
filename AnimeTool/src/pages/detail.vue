@@ -201,6 +201,37 @@
             <EmptyState v-else text="暂无剧集信息" />
           </view>
 
+          <view v-show="currentTab === 'reviews'" class="section">
+            <text class="section-title">用户评测</text>
+
+            <view v-if="reviewsLoading" class="episode-loading">
+              <text class="loading-text">加载中...</text>
+            </view>
+
+            <view v-else-if="reviews.length" class="review-list">
+              <view v-for="item in reviews" :key="item.id" class="review-item">
+                <view class="review-header">
+                  <image v-if="item.userImage" class="review-avatar" :src="item.userImage" mode="aspectFill" lazy-load />
+                  <view v-else class="review-avatar review-avatar-placeholder" />
+                  <view class="review-meta">
+                    <text class="review-user">{{ item.user }}</text>
+                    <text class="review-date">{{ item.date }}</text>
+                  </view>
+                  <view v-if="item.score != null" class="review-score-badge">
+                    <text class="review-score-text">{{ item.score }}</text>
+                  </view>
+                </view>
+                <view v-if="item.tags.length" class="review-tags">
+                  <text v-for="tag in item.tags" :key="tag" class="review-tag">{{ tag }}</text>
+                </view>
+                <text v-if="item.isSpoiler" class="review-spoiler-hint">⚠ 以下评测可能含有剧透</text>
+                <text class="review-body">{{ item.review }}</text>
+              </view>
+            </view>
+
+            <EmptyState v-else text="暂无评测信息" />
+          </view>
+
           <view class="tab-bottom-spacer" />
         </view>
       </view>
@@ -232,7 +263,8 @@ import {
   getAnimeCharacters,
   getAnimeEpisodes,
   getAnimeFull,
-  getAnimeRecommendations
+  getAnimeRecommendations,
+  getAnimeReviews
 } from '../api/anime.js'
 import { useFavoriteStore, WATCH_CATEGORIES, CATEGORY_COLORS } from '../stores/favorite.js'
 import { formatStatus } from '../utils/animeCardMeta.js'
@@ -258,12 +290,16 @@ const episodePagination = ref(null)
 const episodePage = ref(1)
 const episodesLoading = ref(false)
 
+const reviews = ref([])
+const reviewsLoading = ref(false)
+
 const tabs = [
   { key: 'overview', label: '概览' },
   { key: 'episodes', label: '剧集' },
   { key: 'characters', label: '角色' },
   { key: 'studios', label: '工作室' },
-  { key: 'recommendations', label: '推荐' }
+  { key: 'recommendations', label: '推荐' },
+  { key: 'reviews', label: '评测' }
 ]
 
 const favoriteCategory = computed(() => {
@@ -326,6 +362,23 @@ async function loadEpisodes(id, page = 1) {
     uni.showToast({ title: '剧集加载失败', icon: 'none' })
   } finally {
     episodesLoading.value = false
+  }
+}
+
+/**
+ * 加载番剧评测（懒加载，切换到评测 tab 时触发）
+ * @param {number|string} id
+ */
+async function loadReviews(id) {
+  if (reviewsLoading.value) return
+
+  reviewsLoading.value = true
+  try {
+    reviews.value = await getAnimeReviews(id)
+  } catch (error) {
+    uni.showToast({ title: '评测加载失败', icon: 'none' })
+  } finally {
+    reviewsLoading.value = false
   }
 }
 
@@ -510,6 +563,9 @@ onPullDownRefresh(() => {
 watch(currentTab, (tab) => {
   if (tab === 'episodes' && currentId.value && !episodes.value.length) {
     loadEpisodes(currentId.value)
+  }
+  if (tab === 'reviews' && currentId.value && !reviews.value.length) {
+    loadReviews(currentId.value)
   }
 })
 </script>
@@ -1125,5 +1181,112 @@ button.share-btn::after {
   color: #4976D0;
   font-size: 28rpx;
   font-weight: 600;
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.review-item {
+  background: #161922;
+  border: 2rpx solid #1F2635;
+  border-radius: 16rpx;
+  padding: 28rpx;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.review-avatar {
+  flex-shrink: 0;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: #1F2635;
+}
+
+.review-avatar-placeholder {
+  background: #2A3344;
+}
+
+.review-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.review-user {
+  color: #DBE6FF;
+  font-size: 26rpx;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.review-date {
+  color: #6B7A99;
+  font-size: 22rpx;
+}
+
+.review-score-badge {
+  flex-shrink: 0;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 12rpx;
+  background: #1F2635;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-score-text {
+  color: #F2C94C;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.review-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-bottom: 16rpx;
+}
+
+.review-tag {
+  height: 40rpx;
+  padding: 0 14rpx;
+  border-radius: 8rpx;
+  background: #223355;
+  color: #8BB8F7;
+  font-size: 20rpx;
+  line-height: 40rpx;
+  font-weight: 600;
+}
+
+.review-spoiler-hint {
+  color: #D99F2F;
+  font-size: 22rpx;
+  margin-bottom: 12rpx;
+}
+
+.review-body {
+  color: #99A8C9;
+  font-size: 26rpx;
+  line-height: 42rpx;
+  text-align: justify;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

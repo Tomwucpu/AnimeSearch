@@ -60,6 +60,33 @@ export function normalizeEpisodeList(list) {
 }
 
 /**
+ * 将 Jikan 评测列表规范化为应用数据模型
+ * 提取用户信息、评分、评测正文、标签等
+ */
+export function normalizeReviewList(list) {
+  if (!Array.isArray(list)) {
+    return []
+  }
+
+  return list.map((item) => {
+    const user = item.user || {}
+    const jpg = user.images?.jpg || {}
+
+    return {
+      id: item.mal_id,
+      user: user.username || '匿名用户',
+      userImage: jpg.image_url || '',
+      score: item.score ?? null,
+      tags: Array.isArray(item.tags) ? item.tags : [],
+      review: item.review || '',
+      date: item.date ? item.date.slice(0, 10) : '',
+      isSpoiler: !!item.is_spoiler,
+      isPreliminary: !!item.is_preliminary
+    }
+  }).filter((item) => item.id)
+}
+
+/**
  * 将 Jikan 推荐列表规范化为 AnimeCard 兼容数据模型
  * 推荐数据本无 episodes/type 等字段，用占位值填充以复用 AnimeCard 组件
  */
