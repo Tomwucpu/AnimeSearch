@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-import { toFavoriteItem, DEFAULT_CATEGORY } from '../stores/favorite.js'
+import { toFavoriteItem, DEFAULT_CATEGORY } from '../src/stores/favorite.js'
 
 test('toFavoriteItem 默认分类为 want_to_watch', () => {
   const favorite = toFavoriteItem({
@@ -29,7 +29,8 @@ test('toFavoriteItem 默认分类为 want_to_watch', () => {
     members: 3600000,
     genres: ['动作', '冒险'],
     status: 'Finished Airing',
-    category: 'want_to_watch'
+    category: 'want_to_watch',
+    progress: 0
   })
 })
 

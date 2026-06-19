@@ -40,6 +40,26 @@ export function normalizeCharacterList(list) {
 }
 
 /**
+ * 将 Jikan 剧集列表规范化为应用数据模型
+ * 提取 mal_id → number, title, 评分, 播出日期, filler/recap 标记
+ */
+export function normalizeEpisodeList(list) {
+  if (!Array.isArray(list)) {
+    return []
+  }
+
+  return list.map((item) => ({
+    number: item.mal_id,
+    title: item.title || `第 ${item.mal_id} 集`,
+    titleJapanese: item.title_japanese || '',
+    score: item.score ?? null,
+    aired: item.aired ? item.aired.slice(0, 10) : '',
+    filler: !!item.filler,
+    recap: !!item.recap
+  })).filter((item) => item.number)
+}
+
+/**
  * 将 Jikan 推荐列表规范化为 AnimeCard 兼容数据模型
  * 推荐数据本无 episodes/type 等字段，用占位值填充以复用 AnimeCard 组件
  */

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-import { getGenreChinese } from '../utils/genreMap.js'
+import { getGenreChinese } from '../src/utils/genreMap.js'
 
 test('getGenreChinese maps known English genres to Chinese', () => {
   assert.equal(getGenreChinese({ name: 'Action' }), '动作')

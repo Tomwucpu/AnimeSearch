@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-import { normalizeAnime, normalizeAnimeList } from '../utils/normalizeAnime.js'
+import { normalizeAnime, normalizeAnimeList } from '../src/utils/normalizeAnime.js'
 
 test('normalizeAnime maps common Jikan fields for list cards', () => {
   const anime = normalizeAnime({

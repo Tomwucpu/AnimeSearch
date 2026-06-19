@@ -144,6 +144,63 @@
             <EmptyState v-else text="暂无相关推荐" />
           </view>
 
+          <view v-show="currentTab === 'episodes'" class="section">
+            <view v-if="favoriteCategory && anime.episodes !== '未知'" class="progress-header">
+              <view class="progress-info">
+                <text class="progress-label">观看进度</text>
+                <text class="progress-text">{{ episodeProgress }} / {{ anime.episodes }} 集</text>
+              </view>
+              <view class="progress-bar-bg">
+                <view class="progress-bar-fill" :style="{ width: progressPercent + '%' }" />
+              </view>
+              <view class="progress-actions">
+                <view class="progress-btn" @tap="adjustProgress(-1)">−</view>
+                <view class="progress-btn" @tap="adjustProgress(1)">+</view>
+              </view>
+            </view>
+
+            <view v-if="episodesLoading" class="episode-loading">
+              <text class="loading-text">加载中...</text>
+            </view>
+
+            <view v-else-if="episodes.length">
+              <view
+                v-for="ep in episodes"
+                :key="ep.number"
+                class="episode-item"
+                :class="{ 'episode-watched': favoriteCategory && ep.number <= episodeProgress, 'episode-filler': ep.filler, 'episode-recap': ep.recap }"
+                @tap="toggleEpisode(ep.number)"
+              >
+                <view class="episode-left">
+                  <view class="episode-number-wrap">
+                    <text class="episode-number">#{{ String(ep.number).padStart(2, '0') }}</text>
+                    <text v-if="ep.filler" class="episode-badge filler-badge">原创</text>
+                    <text v-else-if="ep.recap" class="episode-badge recap-badge">总集</text>
+                  </view>
+                  <view class="episode-title-wrap">
+                    <text class="episode-title">{{ ep.title }}</text>
+                    <text v-if="ep.aired" class="episode-aired">{{ ep.aired }}</text>
+                  </view>
+                </view>
+                <view class="episode-right">
+                  <text v-if="ep.score" class="episode-score">★{{ ep.score }}</text>
+                  <view v-if="favoriteCategory" class="episode-check">
+                    <view :class="{ 'check-on': ep.number <= episodeProgress, 'check-off': ep.number > episodeProgress }" />
+                  </view>
+                </view>
+              </view>
+              <view
+                v-if="episodePagination?.has_next_page"
+                class="episode-load-more"
+                @tap="loadEpisodes(currentId, episodePage + 1)"
+              >
+                <text class="load-more-text">加载更多</text>
+              </view>
+            </view>
+
+            <EmptyState v-else text="暂无剧集信息" />
+          </view>
+
           <view class="tab-bottom-spacer" />
         </view>
       </view>
@@ -154,6 +211,7 @@
         @select="handleCategorySelect"
         @remove="handleRemoveFavorite"
       />
+      <BackToTop :visible="backTopVisible" @click="scrollToTop" />
     </view>
 
     <EmptyState v-else-if="!loading" text="没有找到番剧详情" />
@@ -162,25 +220,29 @@
 
 <script setup>
 // 番剧详情页：封面、元信息、四标签页点击切换（概览/角色/工作室/推荐）、收藏切换
-import { computed, ref } from 'vue'
-import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app'
+import { computed, ref, watch } from 'vue'
+import { onLoad, onPageScroll, onPullDownRefresh } from '@dcloudio/uni-app'
 
 import EmptyState from '../components/EmptyState.vue'
 import StarRating from '../components/detail/StarRating.vue'
 import CategoryPicker from '../components/detail/CategoryPicker.vue'
 import AnimeCard from '../components/AnimeCard.vue'
+import BackToTop from '../components/BackToTop.vue'
 import {
   getAnimeCharacters,
+  getAnimeEpisodes,
   getAnimeFull,
   getAnimeRecommendations
 } from '../api/anime.js'
 import { useFavoriteStore, WATCH_CATEGORIES, CATEGORY_COLORS } from '../stores/favorite.js'
 import { formatStatus } from '../utils/animeCardMeta.js'
+import { useBackToTop } from '../composables/useBackToTop.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { useFadeIn } from '../composables/useFadeIn.js'
 
 const { goDetail } = useNavigation()
 const { curtainHide } = useFadeIn()
+const { backTopVisible, scrollToTop } = useBackToTop()
 
 const anime = ref(null)
 const characters = ref([])
@@ -191,8 +253,14 @@ const favoriteStore = useFavoriteStore()
 
 const currentTab = ref('overview')
 
+const episodes = ref([])
+const episodePagination = ref(null)
+const episodePage = ref(1)
+const episodesLoading = ref(false)
+
 const tabs = [
   { key: 'overview', label: '概览' },
+  { key: 'episodes', label: '剧集' },
   { key: 'characters', label: '角色' },
   { key: 'studios', label: '工作室' },
   { key: 'recommendations', label: '推荐' }
@@ -223,6 +291,73 @@ const broadcastText = computed(() => {
 const statusText = computed(() => {
   return anime.value?.status ? formatStatus(anime.value.status) : '未知'
 })
+
+const episodeProgress = computed(() => {
+  if (!anime.value) return 0
+  const item = favoriteStore.favorites.find((f) => String(f.id) === String(anime.value.id))
+  return item ? (item.progress ?? 0) : 0
+})
+
+const progressPercent = computed(() => {
+  const total = Number(anime.value?.episodes)
+  if (!total || total === 0) return 0
+  return Math.min((episodeProgress.value / total) * 100, 100)
+})
+
+/**
+ * 加载番剧剧集（懒加载，切换到剧集 tab 时触发）
+ * @param {number|string} id
+ * @param {number} page - 页码，默认第 1 页
+ */
+async function loadEpisodes(id, page = 1) {
+  if (episodesLoading.value) return
+
+  episodesLoading.value = true
+  try {
+    const result = await getAnimeEpisodes(id, page)
+    if (page === 1) {
+      episodes.value = result.list
+    } else {
+      episodes.value = episodes.value.concat(result.list)
+    }
+    episodePagination.value = result.pagination
+    episodePage.value = page
+  } catch (error) {
+    uni.showToast({ title: '剧集加载失败', icon: 'none' })
+  } finally {
+    episodesLoading.value = false
+  }
+}
+
+/**
+ * 调整追番进度（±N 集）
+ * @param {number} delta - 变化量（1 或 -1）
+ */
+function adjustProgress(delta) {
+  if (!anime.value || !favoriteCategory.value) return
+
+  const current = episodeProgress.value
+  const total = Number(anime.value.episodes) || Infinity
+  const next = current + delta
+  const clamped = Math.max(0, Math.min(next, total))
+  favoriteStore.updateProgress(anime.value.id, clamped)
+}
+
+/**
+ * 点击单集切换已看/未看状态
+ * 如果点击的集数等于当前进度 + 1，则前进；如果小于等于当前进度，则回退到该集 - 1
+ * @param {number} number - 点击的集号
+ */
+function toggleEpisode(number) {
+  if (!anime.value || !favoriteCategory.value) return
+
+  const current = episodeProgress.value
+  if (number === current + 1) {
+    favoriteStore.updateProgress(anime.value.id, current + 1)
+  } else if (number <= current) {
+    favoriteStore.updateProgress(anime.value.id, number - 1)
+  }
+}
 
 /**
  * 加载番剧完整详情，触发后立即返回（不阻塞渲染）
@@ -370,6 +505,12 @@ onPullDownRefresh(() => {
     loadDetail(currentId.value)
   }
   uni.stopPullDownRefresh()
+})
+
+watch(currentTab, (tab) => {
+  if (tab === 'episodes' && currentId.value && !episodes.value.length) {
+    loadEpisodes(currentId.value)
+  }
 })
 </script>
 
@@ -754,5 +895,235 @@ button.share-btn::after {
   display: flex;
   flex-direction: column;
   gap: 24rpx;
+}
+
+.progress-header {
+  background: #161922;
+  border: 2rpx solid #1F2635;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.progress-label {
+  color: #6B7A99;
+  font-size: 26rpx;
+}
+
+.progress-text {
+  color: #DBE6FF;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 8rpx;
+  background: #1F2635;
+  border-radius: 4rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4976D0, #7BA3F0);
+  border-radius: 4rpx;
+  transition: width 0.3s ease;
+}
+
+.progress-actions {
+  display: flex;
+  gap: 16rpx;
+  justify-content: flex-end;
+}
+
+.progress-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: #1F2635;
+  color: #DBE6FF;
+  font-size: 36rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.progress-btn:active {
+  background: #2A3344;
+  transform: scale(0.92);
+}
+
+.episode-loading {
+  text-align: center;
+  padding: 48rpx 0;
+}
+
+.loading-text {
+  color: #6B7A99;
+  font-size: 28rpx;
+}
+
+.episode-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  padding: 28rpx 24rpx;
+  background: #161922;
+  border: 2rpx solid #1F2635;
+  border-radius: 14rpx;
+  margin-bottom: 12rpx;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.episode-item:active {
+  border-color: #4976D0;
+}
+
+.episode-watched {
+  background: #1A1F2E;
+  border-color: #2A3344;
+}
+
+.episode-watched .episode-title {
+  color: #6B7A99;
+}
+
+.episode-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.episode-number-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.episode-number {
+  color: #4976D0;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.episode-badge {
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  line-height: 30rpx;
+  font-weight: 600;
+}
+
+.filler-badge {
+  background: #332200;
+  color: #D99F2F;
+}
+
+.recap-badge {
+  background: #2A1A33;
+  color: #B07FD9;
+}
+
+.episode-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.episode-title {
+  color: #DBE6FF;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 36rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.episode-aired {
+  color: #6B7A99;
+  font-size: 22rpx;
+}
+
+.episode-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8rpx;
+  flex-shrink: 0;
+}
+
+.episode-score {
+  color: #F2C94C;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.episode-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-off {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  border: 3rpx solid #3A4560;
+  transition: all 0.2s ease;
+}
+
+.check-on {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  background: #34C759;
+  border: 3rpx solid #34C759;
+  position: relative;
+}
+
+.check-on::after {
+  content: '';
+  position: absolute;
+  top: 3rpx;
+  left: 8rpx;
+  width: 8rpx;
+  height: 14rpx;
+  border: solid #ffffff;
+  border-width: 0 3rpx 3rpx 0;
+  transform: rotate(45deg);
+}
+
+.episode-load-more {
+  text-align: center;
+  padding: 28rpx 0;
+  background: #161922;
+  border: 2rpx solid #1F2635;
+  border-radius: 14rpx;
+  margin-bottom: 12rpx;
+}
+
+.episode-load-more:active {
+  border-color: #4976D0;
+}
+
+.load-more-text {
+  color: #4976D0;
+  font-size: 28rpx;
+  font-weight: 600;
 }
 </style>

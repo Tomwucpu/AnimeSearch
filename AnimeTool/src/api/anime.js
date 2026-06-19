@@ -2,6 +2,7 @@
 import { normalizeAnime, normalizeAnimeFull, normalizeAnimeList } from '../utils/normalizeAnime.js'
 import {
   normalizeCharacterList,
+  normalizeEpisodeList,
   normalizeRecommendationList
 } from '../utils/normalizeAnimeExtras.js'
 import { getGenreChinese } from '../utils/genreMap.js'
@@ -79,6 +80,24 @@ export async function getAnimeRecommendations(id) {
 
   // 推荐数据量较大，取前 8 个以控制详情页渲染开销
   return normalizeRecommendationList(result.data).slice(0, 8)
+}
+
+/**
+ * 获取番剧剧集列表（含分页）
+ * @param {number|string} id - MyAnimeList 番剧 ID
+ * @param {number} page - 页码，默认第 1 页
+ * @returns {{ list: Array, pagination: Object }}
+ */
+export async function getAnimeEpisodes(id, page = 1) {
+  const result = await request({
+    url: `/anime/${id}/episodes`,
+    data: { page }
+  })
+
+  return {
+    list: normalizeEpisodeList(result.data),
+    pagination: result.pagination || {}
+  }
 }
 
 /**

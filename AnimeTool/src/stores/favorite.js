@@ -35,7 +35,8 @@ export function toFavoriteItem(anime, category = DEFAULT_CATEGORY) {
     members: anime.members,
     genres: anime.genres,
     status: anime.status,
-    category
+    category,
+    progress: 0
   }
 }
 
@@ -54,6 +55,15 @@ export const useFavoriteStore = defineStore('favorite', {
     byCategory: (state) => (category) => {
       if (!category) return state.favorites
       return state.favorites.filter((f) => f.category === category)
+    },
+
+    /**
+     * 获取指定番剧的已看集数，未收藏返回 0
+     * @returns {(id: number|string) => number}
+     */
+    getProgress: (state) => (id) => {
+      const item = state.favorites.find((f) => String(f.id) === String(id))
+      return item ? (item.progress ?? 0) : 0
     }
   },
 
@@ -104,6 +114,20 @@ export const useFavoriteStore = defineStore('favorite', {
 
       this.addFavorite(anime)
       return true
+    },
+
+    /**
+     * 更新追番进度（已看集数），自动约束在 0 ~ 总集数之间
+     * @param {number|string} id
+     * @param {number} progress - 新的已看集数
+     */
+    updateProgress(id, progress) {
+      const item = this.favorites.find((f) => String(f.id) === String(id))
+      if (!item) return
+
+      const safe = isNaN(progress) ? 0 : progress
+      const max = typeof item.episodes === 'number' ? item.episodes : Infinity
+      item.progress = Math.max(0, Math.min(safe, max))
     }
   },
 

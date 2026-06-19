@@ -7,7 +7,7 @@ import {
   formatRank,
   formatStatus,
   getVisibleGenres
-} from '../utils/animeCardMeta.js'
+} from '../src/utils/animeCardMeta.js'
 
 test('formatRank returns a ranking label only when rank exists', () => {
   assert.equal(formatRank(1), 'Ranking #1')
