@@ -6,7 +6,7 @@
       height="40"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#DBE6FF"
+      stroke="currentColor"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
@@ -40,11 +40,12 @@ function onTap() {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  background: rgba(31, 38, 53, 0.85);
-  border: 2rpx solid #262F43;
+  background: var(--bg-float);
+  border: 2rpx solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #8b92a8;
   opacity: 0;
   transform: scale(0.8);
   pointer-events: none;

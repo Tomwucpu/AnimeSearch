@@ -1,5 +1,5 @@
 <template>
-  <view class="page">
+  <view class="page" :class="pageClass">
     <view class="fade-curtain" :class="{ hide: curtainHide }" />
     <view v-if="anime" class="detail">
       <view class="header-card">
@@ -266,14 +266,16 @@ import {
   getAnimeRecommendations,
   getAnimeReviews
 } from '../api/anime.js'
-import { useFavoriteStore, WATCH_CATEGORIES, CATEGORY_COLORS } from '../stores/favorite.js'
+import { useFavoriteStore, WATCH_CATEGORIES, getCategoryColors } from '../stores/favorite.js'
 import { formatStatus } from '../utils/animeCardMeta.js'
 import { useBackToTop } from '../composables/useBackToTop.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { useFadeIn } from '../composables/useFadeIn.js'
+import { useTheme } from '../composables/useTheme.js'
 
 const { goDetail } = useNavigation()
 const { curtainHide } = useFadeIn()
+const { pageClass, themeStore } = useTheme()
 const { backTopVisible, scrollToTop } = useBackToTop()
 
 const anime = ref(null)
@@ -314,7 +316,7 @@ const categoryLabel = computed(() => {
 
 const favoriteButtonStyle = computed(() => {
   if (!favoriteCategory.value) return {}
-  const colors = CATEGORY_COLORS[favoriteCategory.value]
+  const colors = getCategoryColors(themeStore.isDark)[favoriteCategory.value]
   return colors ? { background: colors.bg } : {}
 })
 
@@ -573,7 +575,7 @@ watch(currentTab, (tab) => {
 <style scoped>
 .page {
   min-height: 100vh;
-  background: #0F1115;
+  background: var(--bg-page);
 }
 
 .fade-curtain {
@@ -583,7 +585,7 @@ watch(currentTab, (tab) => {
   right: 0;
   bottom: 0;
   z-index: 998;
-  background: #0F1115;
+  background: var(--bg-page);
   opacity: 1;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -606,9 +608,9 @@ watch(currentTab, (tab) => {
   gap: 24rpx;
   margin: 24rpx 32rpx 0;
   padding: 28rpx;
-  background: #121419;
+  background: var(--bg-card);
   border-radius: 16rpx;
-  border: 2rpx solid #1F2635;
+  border: 2rpx solid var(--border-color);
 }
 
 .header-top {
@@ -621,7 +623,7 @@ watch(currentTab, (tab) => {
   width: 260rpx;
   height: 370rpx;
   border-radius: 14rpx;
-  background: #161922;
+  background: var(--bg-secondary);
   overflow: hidden;
 }
 
@@ -634,7 +636,7 @@ watch(currentTab, (tab) => {
 }
 
 .title {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 36rpx;
   font-weight: 800;
   line-height: 48rpx;
@@ -647,12 +649,12 @@ watch(currentTab, (tab) => {
 }
 
 .info-label {
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 24rpx;
 }
 
 .info-value {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 30rpx;
   line-height: 36rpx;
 }
@@ -664,7 +666,7 @@ watch(currentTab, (tab) => {
 }
 
 .score-number {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 30rpx;
   font-weight: 700;
   line-height: 1;
@@ -680,14 +682,14 @@ watch(currentTab, (tab) => {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #1F2635;
-  color: #6B7A99;
+  background: var(--border-color);
+  color: var(--text-muted);
   z-index: 1;
   transition: transform 0.15s ease;
 }
 
 .share-btn:active {
-  background: #2A3344;
+  background: var(--active-bg);
   transform: scale(0.92);
 }
 
@@ -708,8 +710,8 @@ button.share-btn::after {
   width: 100%;
   margin-top: auto;
   border-radius: 38rpx;
-  background: #1847B1;
-  color: #ffffff;
+  background: var(--accent-primary);
+  color: var(--text-white);
   font-size: 26rpx;
   font-weight: 700;
   line-height: 1;
@@ -718,7 +720,7 @@ button.share-btn::after {
 
 .favorite-button:active {
   transform: scale(0.96);
-  background: #0C287F;
+  background: var(--accent-deep);
 }
 
 .favorite-button::after {
@@ -740,7 +742,7 @@ button.share-btn::after {
 
 .tab-bar {
   flex-shrink: 0;
-  background: #0F1115;
+  background: var(--bg-page);
   padding: 8rpx 0;
   margin-top: 24rpx;
 }
@@ -760,12 +762,12 @@ button.share-btn::after {
 
 .tab-text {
   font-size: 28rpx;
-  color: #6B7A99;
+  color: var(--text-muted);
   transition: color 0.25s ease, font-weight 0.25s ease;
 }
 
 .tab-item.active .tab-text {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-weight: 700;
 }
 
@@ -776,7 +778,7 @@ button.share-btn::after {
   transform: translateX(-50%) scale(1);
   width: 40rpx;
   height: 4rpx;
-  background: #4976D0;
+  background: var(--accent-lighter);
   border-radius: 2rpx;
   transition: transform 0.25s ease, width 0.25s ease;
 }
@@ -798,7 +800,7 @@ button.share-btn::after {
 
 .section-title {
   display: block;
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 32rpx;
   font-weight: 800;
   margin-bottom: 24rpx;
@@ -814,7 +816,7 @@ button.share-btn::after {
   transform: translateY(-50%);
   width: 6rpx;
   height: 28rpx;
-  background: #4976D0;
+  background: var(--accent-lighter);
   border-radius: 3rpx;
 }
 
@@ -822,32 +824,32 @@ button.share-btn::after {
   display: flex;
   flex-wrap: wrap;
   gap: 12rpx;
-  background: #161922;
+  background: var(--bg-secondary);
   padding: 32rpx;
   border-radius: 16rpx;
-  border: 2rpx solid #1F2635;
+  border: 2rpx solid var(--border-color);
 }
 
 .genre-tag {
   height: 46rpx;
   padding: 0 18rpx;
   border-radius: 10rpx;
-  background: #1F2635;
-  color: #A1C4F7;
+  background: var(--border-color);
+  color: var(--accent-lightest);
   font-size: 22rpx;
   line-height: 46rpx;
   font-weight: 600;
 }
 
 .intro-box {
-  background: #161922;
+  background: var(--bg-secondary);
   padding: 32rpx;
   border-radius: 16rpx;
-  border: 2rpx solid #1F2635;
+  border: 2rpx solid var(--border-color);
 }
 
 .intro-text {
-  color: #99A8C9;
+  color: var(--text-secondary);
   font-size: 28rpx;
   line-height: 44rpx;
   text-align: justify;
@@ -859,27 +861,27 @@ button.share-btn::after {
   display: flex;
   flex-wrap: wrap;
   gap: 12rpx;
-  background: #161922;
+  background: var(--bg-secondary);
   padding: 32rpx;
   border-radius: 16rpx;
-  border: 2rpx solid #1F2635;
+  border: 2rpx solid var(--border-color);
 }
 
 .studio-tag {
   height: 46rpx;
   padding: 0 18rpx;
   border-radius: 10rpx;
-  background: #223355;
-  color: #8BB8F7;
+  background: var(--studio-tag-bg);
+  color: var(--accent-mid);
   font-size: 22rpx;
   line-height: 46rpx;
   font-weight: 600;
 }
 
 .character-list {
-  background: #161922;
+  background: var(--bg-secondary);
   border-radius: 16rpx;
-  border: 2rpx solid #1F2635;
+  border: 2rpx solid var(--border-color);
   overflow: hidden;
 }
 
@@ -888,7 +890,7 @@ button.share-btn::after {
   align-items: center;
   gap: 24rpx;
   padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid #1F2635;
+  border-bottom: 1rpx solid var(--border-color);
 }
 
 .character-item:last-child {
@@ -900,7 +902,7 @@ button.share-btn::after {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  background: #1F2635;
+  background: var(--border-color);
 }
 
 .character-info {
@@ -920,7 +922,7 @@ button.share-btn::after {
 }
 
 .character-name {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 28rpx;
   font-weight: 600;
   line-height: 36rpx;
@@ -930,7 +932,7 @@ button.share-btn::after {
 }
 
 .character-voice-actor {
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 22rpx;
   line-height: 30rpx;
   margin-top: 4rpx;
@@ -942,7 +944,7 @@ button.share-btn::after {
 .character-role {
   flex-shrink: 0;
   margin-left: 16rpx;
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 22rpx;
   line-height: 30rpx;
 }
@@ -954,8 +956,8 @@ button.share-btn::after {
 }
 
 .progress-header {
-  background: #161922;
-  border: 2rpx solid #1F2635;
+  background: var(--bg-secondary);
+  border: 2rpx solid var(--border-color);
   border-radius: 16rpx;
   padding: 28rpx;
   margin-bottom: 24rpx;
@@ -969,12 +971,12 @@ button.share-btn::after {
 }
 
 .progress-label {
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 26rpx;
 }
 
 .progress-text {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 28rpx;
   font-weight: 700;
 }
@@ -982,7 +984,7 @@ button.share-btn::after {
 .progress-bar-bg {
   width: 100%;
   height: 8rpx;
-  background: #1F2635;
+  background: var(--border-color);
   border-radius: 4rpx;
   overflow: hidden;
   margin-bottom: 20rpx;
@@ -990,7 +992,7 @@ button.share-btn::after {
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4976D0, #7BA3F0);
+  background: linear-gradient(90deg, var(--accent-lighter), var(--accent-gradient-end));
   border-radius: 4rpx;
   transition: width 0.3s ease;
 }
@@ -1005,8 +1007,8 @@ button.share-btn::after {
   width: 60rpx;
   height: 60rpx;
   border-radius: 50%;
-  background: #1F2635;
-  color: #DBE6FF;
+  background: var(--border-color);
+  color: var(--text-primary);
   font-size: 36rpx;
   font-weight: 700;
   display: flex;
@@ -1016,7 +1018,7 @@ button.share-btn::after {
 }
 
 .progress-btn:active {
-  background: #2A3344;
+  background: var(--active-bg);
   transform: scale(0.92);
 }
 
@@ -1026,7 +1028,7 @@ button.share-btn::after {
 }
 
 .loading-text {
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 28rpx;
 }
 
@@ -1036,24 +1038,24 @@ button.share-btn::after {
   justify-content: space-between;
   gap: 16rpx;
   padding: 28rpx 24rpx;
-  background: #161922;
-  border: 2rpx solid #1F2635;
+  background: var(--bg-secondary);
+  border: 2rpx solid var(--border-color);
   border-radius: 14rpx;
   margin-bottom: 12rpx;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .episode-item:active {
-  border-color: #4976D0;
+  border-color: var(--accent-lighter);
 }
 
 .episode-watched {
-  background: #1A1F2E;
-  border-color: #2A3344;
+  background: var(--watched-bg);
+  border-color: var(--active-bg);
 }
 
 .episode-watched .episode-title {
-  color: #6B7A99;
+  color: var(--text-muted);
 }
 
 .episode-left {
@@ -1071,7 +1073,7 @@ button.share-btn::after {
 }
 
 .episode-number {
-  color: #4976D0;
+  color: var(--accent-lighter);
   font-size: 24rpx;
   font-weight: 700;
 }
@@ -1085,13 +1087,13 @@ button.share-btn::after {
 }
 
 .filler-badge {
-  background: #332200;
-  color: #D99F2F;
+  background: var(--filler-bg);
+  color: var(--color-warning);
 }
 
 .recap-badge {
-  background: #2A1A33;
-  color: #B07FD9;
+  background: var(--recap-bg);
+  color: var(--accent-mid);
 }
 
 .episode-title-wrap {
@@ -1101,7 +1103,7 @@ button.share-btn::after {
 }
 
 .episode-title {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 28rpx;
   font-weight: 600;
   line-height: 36rpx;
@@ -1111,7 +1113,7 @@ button.share-btn::after {
 }
 
 .episode-aired {
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 22rpx;
 }
 
@@ -1124,7 +1126,7 @@ button.share-btn::after {
 }
 
 .episode-score {
-  color: #F2C94C;
+  color: var(--color-warning);
   font-size: 24rpx;
   font-weight: 700;
 }
@@ -1139,7 +1141,7 @@ button.share-btn::after {
   width: 28rpx;
   height: 28rpx;
   border-radius: 50%;
-  border: 3rpx solid #3A4560;
+  border: 3rpx solid var(--star-empty);
   transition: all 0.2s ease;
 }
 
@@ -1147,8 +1149,8 @@ button.share-btn::after {
   width: 28rpx;
   height: 28rpx;
   border-radius: 50%;
-  background: #34C759;
-  border: 3rpx solid #34C759;
+  background: var(--color-check);
+  border: 3rpx solid var(--color-check);
   position: relative;
 }
 
@@ -1159,7 +1161,7 @@ button.share-btn::after {
   left: 8rpx;
   width: 8rpx;
   height: 14rpx;
-  border: solid #ffffff;
+  border: solid var(--text-white);
   border-width: 0 3rpx 3rpx 0;
   transform: rotate(45deg);
 }
@@ -1167,18 +1169,18 @@ button.share-btn::after {
 .episode-load-more {
   text-align: center;
   padding: 28rpx 0;
-  background: #161922;
-  border: 2rpx solid #1F2635;
+  background: var(--bg-secondary);
+  border: 2rpx solid var(--border-color);
   border-radius: 14rpx;
   margin-bottom: 12rpx;
 }
 
 .episode-load-more:active {
-  border-color: #4976D0;
+  border-color: var(--accent-lighter);
 }
 
 .load-more-text {
-  color: #4976D0;
+  color: var(--accent-lighter);
   font-size: 28rpx;
   font-weight: 600;
 }
@@ -1190,8 +1192,8 @@ button.share-btn::after {
 }
 
 .review-item {
-  background: #161922;
-  border: 2rpx solid #1F2635;
+  background: var(--bg-secondary);
+  border: 2rpx solid var(--border-color);
   border-radius: 16rpx;
   padding: 28rpx;
 }
@@ -1208,11 +1210,11 @@ button.share-btn::after {
   width: 64rpx;
   height: 64rpx;
   border-radius: 50%;
-  background: #1F2635;
+  background: var(--border-color);
 }
 
 .review-avatar-placeholder {
-  background: #2A3344;
+  background: var(--active-bg);
 }
 
 .review-meta {
@@ -1224,7 +1226,7 @@ button.share-btn::after {
 }
 
 .review-user {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 26rpx;
   font-weight: 600;
   overflow: hidden;
@@ -1233,7 +1235,7 @@ button.share-btn::after {
 }
 
 .review-date {
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 22rpx;
 }
 
@@ -1242,14 +1244,14 @@ button.share-btn::after {
   width: 56rpx;
   height: 56rpx;
   border-radius: 12rpx;
-  background: #1F2635;
+  background: var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .review-score-text {
-  color: #F2C94C;
+  color: var(--color-warning);
   font-size: 24rpx;
   font-weight: 700;
 }
@@ -1265,21 +1267,21 @@ button.share-btn::after {
   height: 40rpx;
   padding: 0 14rpx;
   border-radius: 8rpx;
-  background: #223355;
-  color: #8BB8F7;
+  background: var(--studio-tag-bg);
+  color: var(--accent-mid);
   font-size: 20rpx;
   line-height: 40rpx;
   font-weight: 600;
 }
 
 .review-spoiler-hint {
-  color: #D99F2F;
+  color: var(--color-warning);
   font-size: 22rpx;
   margin-bottom: 12rpx;
 }
 
 .review-body {
-  color: #99A8C9;
+  color: var(--text-secondary);
   font-size: 26rpx;
   line-height: 42rpx;
   text-align: justify;

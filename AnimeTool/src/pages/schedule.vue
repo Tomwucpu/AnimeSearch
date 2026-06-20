@@ -1,5 +1,5 @@
 <template>
-  <view class="page">
+  <view class="page" :class="pageClass">
     <view class="fade-curtain" :class="{ hide: curtainHide }" />
     <view class="day-bar">
       <view class="day-list">
@@ -51,10 +51,12 @@ import { useNavigation } from '../composables/useNavigation.js'
 import { usePagedApi } from '../composables/usePagedApi.js'
 import { useBackToTop } from '../composables/useBackToTop.js'
 import { useFadeIn } from '../composables/useFadeIn.js'
+import { useTheme } from '../composables/useTheme.js'
 
 const { goDetail } = useNavigation()
 const { backTopVisible, scrollToTop } = useBackToTop()
 const { curtainHide } = useFadeIn()
+const { pageClass, themeStore } = useTheme()
 
 const DAY_TABS = [
   { key: 'monday', label: '周一' },
@@ -112,7 +114,7 @@ onReachBottom(() => {
   padding: 24rpx;
   padding-bottom: calc(110rpx + env(safe-area-inset-bottom) + 24rpx);
   box-sizing: border-box;
-  background: #0F1115;
+  background: var(--bg-page);
 }
 
 .fade-curtain {
@@ -122,7 +124,7 @@ onReachBottom(() => {
   right: 0;
   bottom: 0;
   z-index: 998;
-  background: #0F1115;
+  background: var(--bg-page);
   opacity: 1;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -150,18 +152,18 @@ onReachBottom(() => {
   justify-content: center;
   height: 56rpx;
   padding: 0 8rpx;
-  border: 2rpx solid #262F43;
+  border: 2rpx solid var(--border-color);
   border-radius: 14rpx;
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 22rpx;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .day-item.active {
-  background: #1847B1;
-  border-color: #1847B1;
-  color: #DBE6FF;
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--text-white);
 }
 
 .day-dot {
@@ -172,7 +174,7 @@ onReachBottom(() => {
   width: 8rpx;
   height: 8rpx;
   border-radius: 50%;
-  background: #F2C94C;
+  background: var(--color-warning);
 }
 
 .list {

@@ -45,7 +45,8 @@
 
 <script setup>
 // 追番分类选择底部弹窗 — 展示在看/想看/看过三个选项，支持取消追番
-import { WATCH_CATEGORIES, CATEGORY_COLORS } from '../../stores/favorite.js'
+import { WATCH_CATEGORIES, getCategoryColors } from '../../stores/favorite.js'
+import { useTheme } from '../../composables/useTheme.js'
 
 const props = defineProps({
   visible: {
@@ -59,6 +60,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'select', 'remove'])
+
+const { themeStore } = useTheme()
 
 const categoryOptions = [
   { key: 'watching', label: WATCH_CATEGORIES.watching },
@@ -80,7 +83,7 @@ function remove() {
 
 function getOptionStyle(key) {
   if (props.currentCategory !== key) return {}
-  const colors = CATEGORY_COLORS[key]
+  const colors = getCategoryColors(themeStore.isDark)[key]
   if (!colors) return {}
   return { borderColor: colors.bg, color: colors.bg }
 }
@@ -94,7 +97,7 @@ function getOptionStyle(key) {
   right: 0;
   bottom: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--bg-mask);
   display: flex;
   align-items: flex-end;
   animation: fadeIn 0.2s ease;
@@ -107,7 +110,7 @@ function getOptionStyle(key) {
 
 .category-picker {
   width: 100%;
-  background: #161922;
+  background: var(--bg-secondary);
   border-radius: 40rpx 40rpx 0 0;
   padding: 48rpx 32rpx;
   padding-bottom: calc(48rpx + env(safe-area-inset-bottom));
@@ -121,7 +124,7 @@ function getOptionStyle(key) {
 
 .picker-title {
   display: block;
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 34rpx;
   font-weight: 800;
   text-align: center;
@@ -141,8 +144,8 @@ function getOptionStyle(key) {
   height: 104rpx;
   padding: 0 32rpx;
   border-radius: 22rpx;
-  background: #1F2635;
-  color: #A1C4F7;
+  background: var(--bg-tertiary);
+  color: var(--accent-lightest);
   transition: all 0.15s ease;
 }
 
@@ -195,7 +198,7 @@ function getOptionStyle(key) {
 }
 
 .remove-text {
-  color: #EB5757;
+  color: var(--color-error);
   font-size: 30rpx;
   font-weight: 700;
 }

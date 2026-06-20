@@ -39,9 +39,9 @@
   width: 100%;
   padding: 16rpx;
   box-sizing: border-box;
-  border: 2rpx solid #262F43;
+  border: 2rpx solid var(--border-color);
   border-radius: 22rpx;
-  background: #121419;
+  background: var(--bg-card);
   overflow: hidden;
 }
 
@@ -114,7 +114,7 @@
 }
 
 .shimmer {
-  background: linear-gradient(90deg, #1a1f2e 25%, #262f43 50%, #1a1f2e 75%);
+  background: linear-gradient(90deg, var(--skeleton-from) 25%, var(--skeleton-to) 50%, var(--skeleton-from) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite ease-in-out;
 }

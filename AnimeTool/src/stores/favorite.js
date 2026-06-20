@@ -15,6 +15,21 @@ export const CATEGORY_COLORS = {
   watched: { bg: 'rgba(175, 82, 222, 0.75)', text: '#ffffff' }
 }
 
+const CATEGORY_COLORS_LIGHT = {
+  watching: { bg: 'rgba(52, 199, 89, 0.85)', text: '#ffffff' },
+  want_to_watch: { bg: 'rgba(73, 118, 208, 0.90)', text: '#ffffff' },
+  watched: { bg: 'rgba(175, 82, 222, 0.85)', text: '#ffffff' }
+}
+
+/**
+ * 根据主题获取追番分类颜色
+ * @param {boolean} isDark - 是否为暗色主题
+ * @returns {Object} 分类颜色映射
+ */
+export function getCategoryColors(isDark) {
+  return isDark ? CATEGORY_COLORS : CATEGORY_COLORS_LIGHT
+}
+
 export const DEFAULT_CATEGORY = 'want_to_watch'
 
 /**

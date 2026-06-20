@@ -19,7 +19,7 @@
         <view class="score">
           <svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" viewBox="0 0 24 24">
             <path d="M0 0h24v24H0z" fill="none" />
-            <path fill="#f2c94c" d="M17.562 21.56a1 1 0 0 1-.465-.116L12 18.764l-5.097 2.68a1 1 0 0 1-1.45-1.053l.973-5.676l-4.124-4.02a1 1 0 0 1 .554-1.705l5.699-.828l2.549-5.164a1.04 1.04 0 0 1 1.793 0l2.548 5.164l5.699.828a1 1 0 0 1 .554 1.705l-4.124 4.02l.974 5.676a1 1 0 0 1-.985 1.169Z" />
+            <path fill="currentColor" d="M17.562 21.56a1 1 0 0 1-.465-.116L12 18.764l-5.097 2.68a1 1 0 0 1-1.45-1.053l.973-5.676l-4.124-4.02a1 1 0 0 1 .554-1.705l5.699-.828l2.549-5.164a1.04 1.04 0 0 1 1.793 0l2.548 5.164l5.699.828a1 1 0 0 1 .554 1.705l-4.124 4.02l.974 5.676a1 1 0 0 1-.985 1.169Z" />
           </svg>
           <text class="score-value">{{ scoreLabel }}</text>
         </view>
@@ -86,15 +86,15 @@ const extraGenreCount = computed(() => Math.max(genreList.value.length - visible
   width: 100%;
   padding: 16rpx;
   box-sizing: border-box;
-  border: 2rpx solid #262F43;
+  border: 2rpx solid var(--border-color);
   border-radius: 22rpx;
-  background: #121419;
+  background: var(--bg-card);
   overflow: hidden;
   transition: border-color 0.2s ease, transform 0.15s ease;
 }
 
 .anime-card:active {
-  border-color: #4976D0;
+  border-color: var(--accent-lighter);
   transform: scale(0.985);
 }
 
@@ -104,7 +104,7 @@ const extraGenreCount = computed(() => Math.max(genreList.value.length - visible
   height: 280rpx;
   border-radius: 14rpx;
   overflow: hidden;
-  background: #1a1f2e;
+  background: var(--poster-bg);
 }
 
 .poster {
@@ -123,7 +123,7 @@ const extraGenreCount = computed(() => Math.max(genreList.value.length - visible
 }
 
 .title {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 32rpx;
   font-weight: 700;
   line-height: 42rpx;
@@ -144,9 +144,9 @@ const extraGenreCount = computed(() => Math.max(genreList.value.length - visible
 .meta-tag {
   height: 44rpx;
   padding: 0 16rpx;
-  border: 2rpx solid #262F43;
+  border: 2rpx solid var(--border-color);
   border-radius: 10rpx;
-  color: #99A8C9;
+  color: var(--text-secondary);
   font-size: 22rpx;
   line-height: 42rpx;
   font-weight: 600;
@@ -154,13 +154,13 @@ const extraGenreCount = computed(() => Math.max(genreList.value.length - visible
 }
 
 .status-tag {
-  color: #F2C94C;
-  border-color: #5A4A1A;
+  color: var(--color-warning);
+  border-color: var(--status-border);
 }
 
 .broadcast-tag {
-  color: #7FE368;
-  border-color: #1A3A1A;
+  color: var(--color-success);
+  border-color: var(--broadcast-border);
 }
 
 .rating-row {
@@ -173,27 +173,28 @@ const extraGenreCount = computed(() => Math.max(genreList.value.length - visible
   display: flex;
   align-items: center;
   gap: 6rpx;
+  color: var(--star-filled);
 }
 
 .score-star {
-  color: #f2c94c;
+  color: var(--star-filled);
   font-size: 28rpx;
 }
 
 .score-value {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 30rpx;
   font-weight: 700;
 }
 
 .members {
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 22rpx;
   font-weight: 600;
 }
 
 .rank {
-  color: #A1C4F7;
+  color: var(--accent-lightest);
   font-size: 22rpx;
   font-weight: 700;
 }
@@ -211,8 +212,8 @@ const extraGenreCount = computed(() => Math.max(genreList.value.length - visible
   height: 50rpx;
   padding: 0 18rpx;
   border-radius: 12rpx;
-  background: #1F2635;
-  color: #A1C4F7;
+  background: var(--bg-tertiary);
+  color: var(--accent-lightest);
   font-size: 22rpx;
   line-height: 50rpx;
   font-weight: 600;

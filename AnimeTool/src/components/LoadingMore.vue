@@ -37,7 +37,7 @@ const text = computed(() => {
 }
 
 .loading-text {
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 24rpx;
 }
 </style>

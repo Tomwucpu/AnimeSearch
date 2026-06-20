@@ -72,8 +72,8 @@ function switchTab(path) {
   height: calc(110rpx + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
   box-sizing: border-box;
-  background: #121419;
-  border-top: 2rpx solid #262F43;
+  background: var(--bg-card);
+  border-top: 2rpx solid var(--border-color);
   z-index: 999;
 }
 
@@ -86,12 +86,12 @@ function switchTab(path) {
   gap: 6rpx;
   flex: 1;
   height: 100%;
-  color: #6B7A99;
+  color: var(--text-muted);
   transition: color 0.2s ease;
 }
 
 .tab-item.active {
-  color: #4976D0;
+  color: var(--accent-lighter);
 }
 
 .tab-item.active::before {
@@ -102,7 +102,7 @@ function switchTab(path) {
   transform: translateX(-50%);
   width: 40rpx;
   height: 4rpx;
-  background: #4976D0;
+  background: var(--accent-lighter);
   border-radius: 0 0 4rpx 4rpx;
 }
 

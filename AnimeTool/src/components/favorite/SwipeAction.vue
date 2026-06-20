@@ -157,8 +157,8 @@ function onAction(index) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #eb5757;
-  color: #ffffff;
+  background: var(--color-error);
+  color: var(--text-white);
   font-size: 28rpx;
   font-weight: 600;
   border-radius: 0 22rpx 22rpx 0;
@@ -167,6 +167,6 @@ function onAction(index) {
 .swipe-content {
   position: relative;
   z-index: 1;
-  background: #0F1115;
+  background: var(--bg-page);
 }
 </style>

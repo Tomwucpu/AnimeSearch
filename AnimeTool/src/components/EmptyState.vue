@@ -34,7 +34,7 @@ defineProps({
   justify-content: center;
   width: 160rpx;
   height: 160rpx;
-  color: #6B7A99;
+  color: var(--text-muted);
   opacity: 0.35;
 }
 
@@ -44,7 +44,7 @@ defineProps({
 
 .empty-text {
   margin-top: 28rpx;
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 26rpx;
   line-height: 40rpx;
 }

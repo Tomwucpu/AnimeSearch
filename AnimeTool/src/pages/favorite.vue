@@ -1,5 +1,5 @@
 <template>
-  <view class="page">
+  <view class="page" :class="pageClass">
     <view class="fade-curtain" :class="{ hide: curtainHide }" />
 
     <view v-if="favorites.length" class="tab-bar">
@@ -46,14 +46,16 @@ import EmptyState from '../components/EmptyState.vue'
 import BackToTop from '../components/BackToTop.vue'
 import CustomTabBar from '../components/CustomTabBar.vue'
 import SwipeAction from '../components/favorite/SwipeAction.vue'
-import { useFavoriteStore, WATCH_CATEGORIES, CATEGORY_COLORS } from '../stores/favorite.js'
+import { useFavoriteStore, WATCH_CATEGORIES, getCategoryColors } from '../stores/favorite.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { useBackToTop } from '../composables/useBackToTop.js'
 import { useFadeIn } from '../composables/useFadeIn.js'
+import { useTheme } from '../composables/useTheme.js'
 
 const { goDetail } = useNavigation()
 const { backTopVisible, scrollToTop } = useBackToTop()
 const { curtainHide } = useFadeIn()
+const { pageClass, themeStore } = useTheme()
 
 const favoriteStore = useFavoriteStore()
 const favorites = computed(() => favoriteStore.favorites)
@@ -82,7 +84,7 @@ function getCategoryLabel(category) {
 }
 
 function getCategoryStyle(category) {
-  const colors = CATEGORY_COLORS[category]
+  const colors = getCategoryColors(themeStore.isDark)[category]
   if (!colors) return { background: 'rgba(73, 118, 208, 0.75)' }
   return { background: colors.bg, color: colors.text }
 }
@@ -123,7 +125,7 @@ onPullDownRefresh(() => {
   padding: 24rpx;
   padding-bottom: calc(110rpx + env(safe-area-inset-bottom) + 24rpx);
   box-sizing: border-box;
-  background: #0F1115;
+  background: var(--bg-page);
 }
 
 .fade-curtain {
@@ -133,7 +135,7 @@ onPullDownRefresh(() => {
   right: 0;
   bottom: 0;
   z-index: 998;
-  background: #0F1115;
+  background: var(--bg-page);
   opacity: 1;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -154,7 +156,7 @@ onPullDownRefresh(() => {
   height: 60rpx;
   padding: 0;
   border-radius: 30rpx;
-  background: #1F2635;
+  background: var(--bg-tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -162,17 +164,17 @@ onPullDownRefresh(() => {
 }
 
 .tab-item.active {
-  background: #1847B1;
+  background: var(--accent-primary);
 }
 
 .tab-text {
-  color: #A1C4F7;
+  color: var(--accent-lightest);
   font-size: 26rpx;
   font-weight: 600;
 }
 
 .tab-item.active .tab-text {
-  color: #ffffff;
+  color: var(--text-white);
 }
 
 .list {

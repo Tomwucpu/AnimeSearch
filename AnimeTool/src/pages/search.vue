@@ -1,5 +1,5 @@
 <template>
-  <view class="page">
+  <view class="page" :class="pageClass">
     <view class="fade-curtain" :class="{ hide: curtainHide }" />
     <view v-if="mode === 'keyword'" class="search-bar">
       <input
@@ -155,10 +155,12 @@ import { useNavigation } from '../composables/useNavigation.js'
 import { usePagedApi } from '../composables/usePagedApi.js'
 import { useBackToTop } from '../composables/useBackToTop.js'
 import { useFadeIn } from '../composables/useFadeIn.js'
+import { useTheme } from '../composables/useTheme.js'
 
 const { goDetail } = useNavigation()
 const { backTopVisible, scrollToTop } = useBackToTop()
 const { curtainHide } = useFadeIn()
+const { pageClass, themeStore } = useTheme()
 
 const keyword = ref('')
 const mode = ref('keyword')
@@ -318,7 +320,7 @@ onPullDownRefresh(() => {
   padding: 24rpx;
   padding-bottom: calc(110rpx + env(safe-area-inset-bottom) + 24rpx);
   box-sizing: border-box;
-  background: #0F1115;
+  background: var(--bg-page);
 }
 
 .fade-curtain {
@@ -328,7 +330,7 @@ onPullDownRefresh(() => {
   right: 0;
   bottom: 0;
   z-index: 998;
-  background: #0F1115;
+  background: var(--bg-page);
   opacity: 1;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -351,22 +353,22 @@ onPullDownRefresh(() => {
   padding: 0 36rpx;
   box-sizing: border-box;
   border-radius: 44rpx;
-  background: #161922;
-  color: #DBE6FF;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   font-size: 28rpx;
-  border: 2rpx solid #262F43;
+  border: 2rpx solid var(--border-color);
 }
 
 .search-input:focus {
-  border-color: #4976D0;
+  border-color: var(--accent-lighter);
 }
 
 .search-button {
   width: 140rpx;
   height: 88rpx;
   border-radius: 44rpx;
-  background: #1847B1;
-  color: #ffffff;
+  background: var(--accent-primary);
+  color: var(--text-white);
   font-size: 28rpx;
   font-weight: 600;
   line-height: 88rpx;
@@ -375,7 +377,7 @@ onPullDownRefresh(() => {
 
 .search-button:active {
   transform: scale(0.95);
-  background: #0C287F;
+  background: var(--accent-deep);
 }
 
 .search-button::after {
@@ -389,8 +391,8 @@ onPullDownRefresh(() => {
   height: 80rpx;
   padding: 0 24rpx;
   margin-bottom: 8rpx;
-  background: #161922;
-  border: 2rpx solid #262F43;
+  background: var(--bg-secondary);
+  border: 2rpx solid var(--border-color);
   border-radius: 14rpx;
 }
 
@@ -400,7 +402,7 @@ onPullDownRefresh(() => {
 }
 
 .filter-toggle-text {
-  color: #A1C4F7;
+  color: var(--accent-lightest);
   font-size: 28rpx;
   font-weight: 600;
 }
@@ -409,7 +411,7 @@ onPullDownRefresh(() => {
   width: 36rpx;
   height: 36rpx;
   border-radius: 50%;
-  background: #1847B1;
+  background: var(--accent-primary);
   color: #fff;
   font-size: 22rpx;
   font-weight: 700;
@@ -425,7 +427,7 @@ onPullDownRefresh(() => {
   justify-content: center;
   width: 40rpx;
   height: 40rpx;
-  color: #6B7A99;
+  color: var(--text-muted);
   transition: transform 0.25s ease;
 }
 
@@ -435,7 +437,7 @@ onPullDownRefresh(() => {
 
 .filter-toggle-arrow.open {
   transform: rotate(180deg);
-  color: #4976D0;
+  color: var(--accent-lighter);
 }
 
 .filter-panel-wrapper {
@@ -453,8 +455,8 @@ onPullDownRefresh(() => {
 .filter-panel {
   margin-bottom: 24rpx;
   padding: 24rpx;
-  background: #161922;
-  border: 2rpx solid #262F43;
+  background: var(--bg-secondary);
+  border: 2rpx solid var(--border-color);
   border-radius: 14rpx;
 }
 
@@ -468,13 +470,13 @@ onPullDownRefresh(() => {
 .filter-label {
   flex-shrink: 0;
   width: 80rpx;
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 26rpx;
   font-weight: 700;
 }
 
 .genre-count {
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 22rpx;
 }
 
@@ -494,9 +496,9 @@ onPullDownRefresh(() => {
   align-items: center;
   height: 60rpx;
   padding: 0 22rpx;
-  border: 2rpx solid #262F43;
+  border: 2rpx solid var(--border-color);
   border-radius: 12rpx;
-  color: #99A8C9;
+  color: var(--text-secondary);
   font-size: 24rpx;
   font-weight: 600;
   transition: all 0.15s ease;
@@ -504,9 +506,9 @@ onPullDownRefresh(() => {
 }
 
 .chip.active {
-  background: #1847B1;
-  border-color: #1847B1;
-  color: #ffffff;
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--text-white);
 }
 
 .genre-grid {
@@ -521,7 +523,7 @@ onPullDownRefresh(() => {
   justify-content: center;
   padding: 12rpx 0;
   margin-bottom: 8rpx;
-  color: #4976D0;
+  color: var(--accent-lighter);
   font-size: 24rpx;
   font-weight: 600;
 }

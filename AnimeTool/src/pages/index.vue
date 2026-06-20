@@ -1,5 +1,5 @@
 <template>
-  <view class="page">
+  <view class="page" :class="pageClass">
     <view class="fade-curtain" :class="{ hide: curtainHide }" />
     <swiper
       v-if="banners.length"
@@ -8,7 +8,7 @@
       autoplay
       indicator-dots
       indicator-color="rgba(255,255,255,.2)"
-      indicator-active-color="#A1C4F7"
+      :indicator-active-color="indicatorColor"
     >
       <swiper-item v-for="item in banners" :key="item.id">
         <view class="banner-item" @tap="goDetail(item.id)">
@@ -60,6 +60,7 @@
 
     <EmptyState v-if="!loading && !animeList.length" text="暂时没有番剧数据" />
     <LoadingMore v-if="animeList.length" :status="loadStatus" />
+    <ThemeToggle :shiftUp="backTopVisible" />
     <RandomRecommend :shiftUp="backTopVisible" @click="goRandom" />
     <BackToTop :visible="backTopVisible" @click="scrollToTop" />
     <CustomTabBar current="/pages/index" />
@@ -68,7 +69,7 @@
 
 <script setup>
 // 首页：Banner 轮播（取热门前5条）+ 热门番剧无限列表
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { onLoad, onShow, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app'
 
 import AnimeCard from '../components/AnimeCard.vue'
@@ -77,16 +78,22 @@ import EmptyState from '../components/EmptyState.vue'
 import LoadingMore from '../components/LoadingMore.vue'
 import BackToTop from '../components/BackToTop.vue'
 import RandomRecommend from '../components/RandomRecommend.vue'
+import ThemeToggle from '../components/ThemeToggle.vue'
 import CustomTabBar from '../components/CustomTabBar.vue'
 import { getTopAnime, getSeasonNow, getRandomAnime } from '../api/anime.js'
 import { useNavigation } from '../composables/useNavigation.js'
 import { usePagedApi } from '../composables/usePagedApi.js'
 import { useBackToTop } from '../composables/useBackToTop.js'
 import { useFadeIn } from '../composables/useFadeIn.js'
+import { useTheme } from '../composables/useTheme.js'
 
 const { goDetail } = useNavigation()
 const { backTopVisible, scrollToTop } = useBackToTop()
 const { curtainHide } = useFadeIn()
+const { pageClass, themeStore } = useTheme()
+
+// swiper indicator 颜色需通过 prop 传入，无法使用 CSS 变量
+const indicatorColor = computed(() => themeStore.isDark ? '#A1C4F7' : '#2B5CA8')
 
 const currentTab = ref(0)
 const banners = ref([])
@@ -149,7 +156,7 @@ async function goRandom() {
   padding: 24rpx;
   padding-bottom: calc(110rpx + env(safe-area-inset-bottom) + 24rpx);
   box-sizing: border-box;
-  background: #0F1115;
+  background: var(--bg-page);
 }
 
 .fade-curtain {
@@ -159,7 +166,7 @@ async function goRandom() {
   right: 0;
   bottom: 0;
   z-index: 998;
-  background: #0F1115;
+  background: var(--bg-page);
   opacity: 1;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -174,7 +181,7 @@ async function goRandom() {
   height: 400rpx;
   border-radius: 22rpx;
   overflow: hidden;
-  background: #161922;
+  background: var(--bg-secondary);
 }
 
 .banner-item {
@@ -186,7 +193,7 @@ async function goRandom() {
 .banner-image {
   width: 100%;
   height: 100%;
-  background: #1a1f2e;
+  background: var(--poster-bg);
 }
 
 .banner-mask {
@@ -198,11 +205,11 @@ async function goRandom() {
   flex-direction: column;
   gap: 12rpx;
   padding: 100rpx 32rpx 36rpx;
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.9));
+  background: linear-gradient(180deg, transparent, var(--bg-mask));
 }
 
 .banner-title {
-  color: #ffffff;
+  color: var(--text-white);
   font-size: 36rpx;
   font-weight: 800;
   line-height: 48rpx;
@@ -215,12 +222,12 @@ async function goRandom() {
 }
 
 .banner-star {
-  color: #f2c94c;
+  color: var(--star-filled);
   font-size: 24rpx;
 }
 
 .banner-score {
-  color: #A1C4F7;
+  color: var(--accent-lightest);
   font-size: 26rpx;
   font-weight: 700;
 }
@@ -229,8 +236,8 @@ async function goRandom() {
   display: flex;
   margin: 32rpx 0 0;
   padding: 8rpx;
-  background: #161922;
-  border: 2rpx solid #262F43;
+  background: var(--bg-secondary);
+  border: 2rpx solid var(--border-color);
   border-radius: 14rpx;
 }
 
@@ -241,15 +248,15 @@ async function goRandom() {
   justify-content: center;
   height: 72rpx;
   border-radius: 10rpx;
-  color: #6B7A99;
+  color: var(--text-muted);
   font-size: 28rpx;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .tab-item.active {
-  background: #1847B1;
-  color: #DBE6FF;
+  background: var(--accent-primary);
+  color: var(--text-white);
 }
 
 .section-head {
@@ -257,7 +264,7 @@ async function goRandom() {
 }
 
 .section-title {
-  color: #DBE6FF;
+  color: var(--text-primary);
   font-size: 34rpx;
   font-weight: 800;
   position: relative;
@@ -272,7 +279,7 @@ async function goRandom() {
   transform: translateY(-50%);
   width: 6rpx;
   height: 28rpx;
-  background: #4976D0;
+  background: var(--accent-lighter);
   border-radius: 3rpx;
 }
 
